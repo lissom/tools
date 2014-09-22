@@ -16,8 +16,6 @@ if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
    echo madvise > /sys/kernel/mm/transparent_hugepage/defrag
 fi
 
-echo 0 > /proc/sys/vm/zone_reclaim_mode
-
 exit 0
 EOF
 
@@ -34,8 +32,11 @@ if [ -f /etc/selinux/config ]; then
 sudo sed -i 's/enforcing/disabled/' /etc/selinux/config
 fi
 
-#set keepalive
-echo "net.ipv4.tcp_keepalive_time = 300" >> /etc/sysctl.conf
+#set keepalive and zone_reclaim_mode
+cat <<EOF>> /etc/sysctl.conf
+net.ipv4.tcp_keepalive_time = 300
+vm.zone_reclaim_mode = 0
+EOF
 sysctl -p
 
 #set ulimits
