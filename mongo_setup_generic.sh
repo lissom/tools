@@ -1,10 +1,31 @@
-sudo su -
+#!/bin/bash
 
+if [ `id -u` -ne 0 ]; then 
+  #attempt to promote to su, works on amazon boxes etc
+  sudo -n su -
+  if [ `id -u` -ne 0 ]; then 
+    echo
+    echo ** This script must be ran as root, unable to sudo su - to root. **
+    echo
+    #abort script if we aren't root, do nothing in interactive shell
+    case $- in
+    *i*)
+      sleep 2
+    ;;
+    *)
+      exit
+    ;;
+    esac
+  fi
+fi
+
+function do_fixes {
+   
 #AMAZON instances remove the cloud config
 umount /dev/xvdb
 sed -i '/cloudconfig/d' /etc/fstab
 
-sudo cat << EOF > /etc/rc.local
+sudo cat << EOF >> /etc/rc.local
 #!/bin/sh -e
 
 if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
@@ -33,7 +54,7 @@ sudo sed -i 's/enforcing/disabled/' /etc/selinux/config
 fi
 
 #set keepalive and zone_reclaim_mode
-cat <<EOF>> /etc/sysctl.conf
+cat <<EOF> /etc/sysctl.conf
 net.ipv4.tcp_keepalive_time = 300
 vm.zone_reclaim_mode = 0
 EOF
@@ -53,3 +74,8 @@ cat <<EOF>> /etc/udev/rules.d/51-ec2-hvm-devices.rules
 SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="16", ATTR{queue/scheduler}="noop"
 EOF
 
+}
+
+if [ `id -u` -eq 0 ]; then 
+  do_fixes
+fi
