@@ -19,8 +19,9 @@ if [ `id -u` -ne 0 ]; then
   fi
 fi
 
-function do_fixes {
-   
+
+if [ `id -u` -eq 0 ]; then 
+
 #AMAZON instances remove the cloud config
 umount /dev/xvdb
 sed -i '/cloudconfig/d' /etc/fstab
@@ -74,8 +75,4 @@ cat <<EOF>> /etc/udev/rules.d/51-ec2-hvm-devices.rules
 SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="16", ATTR{queue/scheduler}="noop"
 EOF
 
-}
-
-if [ `id -u` -eq 0 ]; then 
-  do_fixes
 fi
