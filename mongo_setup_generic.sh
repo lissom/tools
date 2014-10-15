@@ -70,8 +70,8 @@ echo "* soft nofile 64000
 rm -rf /etc/security/limits.d/*
 
 #set RA
-#NOTE: On Amazon read_ahead_kb is getting translated to 2x for RA (becuause SSZ = 512?)
-cat <<EOF>> /etc/udev/rules.d/51-ec2-hvm-devices.rules
+#Note the scheduler is set to "noop", bare metal probably want to remove that/cfq
+cat <<EOF>> /etc/udev/rules.d/51-mongo-vm-devices.rules
 SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="16", ATTR{queue/scheduler}="noop"
 EOF
 
