@@ -71,8 +71,9 @@ rm -rf /etc/security/limits.d/*
 
 #set RA
 #Note the scheduler is set to "noop", bare metal probably want to remove that/cfq
+#For non-flash, read_ahead_kb is probably by 16 (which is == blockdev --setra 32 /dev/...)
 cat <<EOF>> /etc/udev/rules.d/51-mongo-vm-devices.rules
-SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="16", ATTR{queue/scheduler}="noop"
+SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="0", ATTR{queue/scheduler}="noop"
 EOF
 
 fi
