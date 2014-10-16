@@ -27,12 +27,8 @@ fi
 exit 0
 EOF
 
-#disable NUMA
-#assumes Amazon linux
-sed -i '/^kernel/ s/$/ numa=off/g' /etc/grub.conf
-#assumes ubuntu
-sed -i '/^kernel/ s/$/ numa=off/g' /boot/grub/menu.lst
-sed -i '/^kernel/ s/$/ apparmor=0/g' /boot/grub/menu.lst
+#Ubuntu disable apparmor
+sed -i '/^kernel/ s/$/ apparmor=0/g' /boot/grub/grub.cfg
 
 #disable SE linux
 #this needs to be updated to change anything to disabled, permissive sucks to (still does work)
