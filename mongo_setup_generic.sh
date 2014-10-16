@@ -26,11 +26,6 @@ fi
 
 exit 0
 EOF
-#Amazon disable NUMA, needs to be ran each boot
-sed -i sed -i '/^kernel/ s/$/ numa=0/g' /boot/grub/grub.cfg
-#Ubuntu disable apparmor, needs to be ran each boot
-sed -i '/^kernel/ s/$/ numa=0/g' /boot/grub/grub.cfg
-sed -i '/^kernel/ s/$/ apparmor=0/g' /boot/grub/grub.cfg
 
 #disable SE linux
 #this needs to be updated to change anything to disabled, permissive sucks to (still does work)
