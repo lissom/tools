@@ -1,4 +1,6 @@
 #!/bin/bash
+# $1 read_ahead_kb
+# $2 scheduler
 
 if [ `id -u` -ne 0 ]; then 
   #attempt to promote to su, works on amazon boxes etc
@@ -22,6 +24,9 @@ fi
 
 #If we are root, do all the following, no idents as this is everything
 if [ `id -u` -eq 0 ]; then 
+
+if [ -z $1 ]; then rakb=0; else rabk=$1;
+if [ -z $2 ]; then sched=noop; else sched=$2;
 
 #AMAZON instances remove the cloud config
 umount /dev/xvdb
@@ -77,7 +82,7 @@ rm -rf /etc/security/limits.d/*
 #Note the scheduler is set to "noop", bare metal probably want to remove that/cfq
 #For non-flash, read_ahead_kb is probably by 16 (which is == blockdev --setra 32 /dev/...)
 cat <<EOF>> /etc/udev/rules.d/51-mongo-vm-devices.rules
-SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="0", ATTR{queue/scheduler}="noop"
+SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}"
 EOF
 
 fi
