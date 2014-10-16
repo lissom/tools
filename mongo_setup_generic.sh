@@ -20,6 +20,7 @@ if [ `id -u` -ne 0 ]; then
 fi
 
 
+#If we are root, do all the following, no idents as this is everything
 if [ `id -u` -eq 0 ]; then 
 
 #AMAZON instances remove the cloud config
