@@ -57,6 +57,6 @@ rm -rf /etc/security/limits.d/*
 cat <<EOF>> /etc/udev/rules.d/99-mongo-vm-devices.rules
 SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}"
 EOF
-; else 
-echo This script must be run as root;
+else 
+echo This script must be run as root
 fi
