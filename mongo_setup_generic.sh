@@ -64,6 +64,7 @@ EOF
 sysctl -p
 
 #set ulimits
+#set for all users, in multitenant, user may be mongodb or mongod
 echo "* soft nofile 64000
 * hard nofile 64000
 * soft nproc 32000
