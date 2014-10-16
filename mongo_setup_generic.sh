@@ -28,6 +28,7 @@ sed -i '/cloudconfig/d' /etc/fstab
 
 sed -i '/exit 0/d' /etc/rc.local
 cat << EOF >> /etc/rc.local
+#Will use madvise if available, if not will use never
 if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
    echo never > /sys/kernel/mm/transparent_hugepage/enabled
    echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
