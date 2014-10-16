@@ -26,9 +26,8 @@ if [ `id -u` -eq 0 ]; then
 umount /dev/xvdb
 sed -i '/cloudconfig/d' /etc/fstab
 
-sudo cat << EOF >> /etc/rc.local
-#!/bin/sh -e
-
+sed -i '/exit 0/d' /etc/rc.local
+cat << EOF >> /etc/rc.local
 if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
    echo never > /sys/kernel/mm/transparent_hugepage/enabled
    echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
@@ -55,7 +54,9 @@ sudo sed -i 's/enforcing/disabled/' /etc/selinux/config
 fi
 
 #set keepalive and zone_reclaim_mode
-cat <<EOF> /etc/sysctl.conf
+sed -i '/net.ipv4.tcp_keepalive_time/d' /etc/sysctl.conf
+sed -i '/vm.zone_reclaim_mode/d' /etc/sysctl.conf
+cat << EOF >> /etc/sysctl.conf
 net.ipv4.tcp_keepalive_time = 300
 vm.zone_reclaim_mode = 0
 EOF
