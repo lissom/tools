@@ -26,8 +26,10 @@ fi
 
 exit 0
 EOF
-
-#Ubuntu disable apparmor
+#Amazon disable NUMA, needs to be ran each boot
+sed -i sed -i '/^kernel/ s/$/ numa=0/g' /boot/grub/grub.cfg
+#Ubuntu disable apparmor, needs to be ran each boot
+sed -i '/^kernel/ s/$/ numa=0/g' /boot/grub/grub.cfg
 sed -i '/^kernel/ s/$/ apparmor=0/g' /boot/grub/grub.cfg
 
 #disable SE linux
