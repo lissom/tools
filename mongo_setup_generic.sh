@@ -2,26 +2,6 @@
 # $1 read_ahead_kb
 # $2 scheduler
 
-if [ `id -u` -ne 0 ]; then 
-  #attempt to promote to su, works on amazon boxes etc
-  sudo -n su -
-  if [ `id -u` -ne 0 ]; then 
-    echo
-    echo ** This script must be ran as root, unable to sudo su - to root. **
-    echo
-    #abort script if we aren't root, do nothing in interactive shell
-    case $- in
-    *i*)
-      sleep 2
-    ;;
-    *)
-      exit
-    ;;
-    esac
-  fi
-fi
-
-
 #If we are root, do all the following, no idents as this is everything
 if [ `id -u` -eq 0 ]; then 
 
@@ -85,4 +65,6 @@ cat <<EOF>> /etc/udev/rules.d/99-mongo-vm-devices.rules
 SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}"
 EOF
 
+else 
+echo This script must be run as root
 fi
