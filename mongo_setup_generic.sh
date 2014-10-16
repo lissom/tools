@@ -5,8 +5,8 @@
 #If we are root, do all the following, no idents as this is everything
 if [ `id -u` -eq 0 ]; then 
 
-if [ -z $1 ]; then rakb=0; else rabk=$1;
-if [ -z $2 ]; then sched=noop; else sched=$2;
+if [ -z $1 ]; then rakb=0; else rabk=$1; fi
+if [ -z $2 ]; then sched=noop; else sched=$2; fi
 
 #AMAZON instances remove the cloud config
 umount /dev/xvdb
@@ -64,7 +64,6 @@ rm -rf /etc/security/limits.d/*
 cat <<EOF>> /etc/udev/rules.d/99-mongo-vm-devices.rules
 SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}"
 EOF
-
-else 
-echo This script must be run as root
+; else 
+echo This script must be run as root;
 fi
