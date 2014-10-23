@@ -28,9 +28,9 @@ exit 0
 EOF
 
 #disable SE linux
-#this needs to be updated to change anything to disabled, permissive sucks to (still does work)
 if [ -f /etc/selinux/config ]; then
 sudo sed -i 's/enforcing/disabled/' /etc/selinux/config
+sudo sed -i 's/permissive/disabled/' /etc/selinux/config
 fi
 
 #set keepalive and zone_reclaim_mode
