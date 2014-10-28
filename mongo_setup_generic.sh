@@ -5,7 +5,7 @@
 #If we are root, do all the following, no idents as this is everything
 if [ `id -u` -eq 0 ]; then 
 
-if [ -z $1 ]; then rakb=0; else rabk=$1; fi
+if [ -z $1 ]; then rakb=16; else rabk=$1; fi
 if [ -z $2 ]; then sched=noop; else sched=$2; fi
 
 #AMAZON instances remove the cloud config
