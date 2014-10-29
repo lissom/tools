@@ -44,10 +44,10 @@ sysctl -p
 
 #set ulimits
 #set for all users, in multitenant, user may be mongodb or mongod
-echo "* soft nofile 64000
-* hard nofile 64000
-* soft nproc 32000
-* hard nproc 32000" > /etc/security/limits.conf
+echo "* soft nofile unlimited
+* hard nofile unlimited
+* soft nproc unlimited
+* hard nproc unlimited" > /etc/security/limits.conf
 #various RHEL clones set things in limits.d, we don't want any of them
 rm -rf /etc/security/limits.d/*
 
