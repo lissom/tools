@@ -460,6 +460,15 @@ case $USERCMD in
 	addtocluster) mongoaddshards
 	;;
 
+	export)exportjson
+	;;
+
+	tar)tarjson
+	;;
+
+	tartoloader)toloader
+	;;
+
 	onstart)
 		initdiskraid0
 		disksetup
