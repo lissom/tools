@@ -457,6 +457,9 @@ case $USERCMD in
 	stop) pkill mongod; pkill mongos
 	;;
 
+	addtocluster) mongoaddshards
+	;;
+
 	onstart)
 		initdiskraid0
 		disksetup
