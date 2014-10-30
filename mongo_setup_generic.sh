@@ -1,4 +1,7 @@
 #!/bin/bash
+echo WARNING: This script is setting up all the disks for SSD use, modify udev if needed!!!
+echo WARNING: This script is setting up all the disks for SSD use, modify udev if needed!!!
+echo WARNING: This script is setting up all the disks for SSD use, modify udev if needed!!!
 # $1 read_ahead_kb
 # $2 scheduler
 
@@ -55,7 +58,7 @@ rm -rf /etc/security/limits.d/*
 #Note the scheduler is set to "noop", bare metal probably want to remove that/cfq
 #For non-flash, read_ahead_kb is probably by 16 (which is == blockdev --setra 32 /dev/...)
 cat << EOF >> /etc/udev/rules.d/99-mongo-vm-devices.rules
-SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}"
+SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}", ATTR{queue/add_random}="0”, ATTR{queue/rotational}="0”, ATTR{queue/rq_affinity}="2"
 EOF
 else 
 echo This script must be run as root
