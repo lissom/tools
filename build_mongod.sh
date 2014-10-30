@@ -356,7 +356,7 @@ function tarjson() {
 #
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    tar cjf /data/$d/$m/export.json.tar.b2 /data/$d/$m/export.json &
+    tar cjf /data/$d/$m/export.json.tar.bz2 /data/$d/$m/export.json &
     sleep 1
   done
 done
@@ -459,13 +459,13 @@ case $USERCMD in
 	addtocluster) mongoaddshards
 	;;
 
-	export)exportjson
+	export)doexport
 	;;
 
-	tar)tarjson
+	tar)dotar
 	;;
 
-	tartoloader)toloader
+	tartoloader)domove
 	;;
 
 	onstart)
