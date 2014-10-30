@@ -459,13 +459,13 @@ case $USERCMD in
 	addtocluster) mongoaddshards
 	;;
 
-	export)doexport
+	doexport)exportjson
 	;;
 
-	tar)dotar
+	dotar)tarjson
 	;;
 
-	tartoloader)domove
+	dotartoloader)tartoloader
 	;;
 
 	onstart)
