@@ -42,10 +42,10 @@ vm.zone_reclaim_mode = 0
 EOF
 sysctl -p
 
-#set ulimits
+#set ulimits - for extensive microsharding these need to be huge
 #set for all users, in multitenant, user may be mongodb or mongod
-echo "* soft nofile unlimited
-* hard nofile unlimited
+echo "* soft nofile 64000
+* hard nofile 64000
 * soft nproc unlimited
 * hard nproc unlimited" > /etc/security/limits.conf
 #various RHEL clones set things in limits.d, we don't want any of them
