@@ -3,7 +3,6 @@
 #
 # RUN THESE VARIABLES FOR THE COMMANDS TO WORK
 # 
-set -u
 
 USERCMD=$1
 #default values
@@ -16,23 +15,61 @@ NUMANODECOUNT=2
 if [ ! -z $2 ]; then MONGOEND=$2; fi
 if [ ! -z $3 ]; then DISKEND=$3; fi
 if [ ! -z $4 ]; then NUMANODECOUNT=$4; fi
+PROGRAMS="nano screen xfsprogs mdadm numactl"
 
-declare -a HOSTS=("172.31.20.42" "172.31.20.40" "172.31.20.41")
-declare -a WEEKLYJOBS=("agg1.js" "agg2.js" "agg4.js" "agg5.js")
+grep -q "debian" /etc/os-release
+if [ $? == 0 ]; then OSVERSION="debian"; return 0; fi
+grep -q "rhel" /etc/os-release
+if [ $? == 0 ]; then OSVERSION="rhel"; return 0; fi
+echo No OS detected
+
+set -u
+
+#declare -a HOSTS=("172.31.20.42" "172.31.20.40" "172.31.20.41")
+#declare -a WEEKLYJOBS=("agg1.js" "agg2.js" "agg4.js" "agg5.js")
 
 #
 # END VARIALBES
 #
 
 function installrhel() {
-#update the server and install the basics
-#***run yum update here or not at all***
 sudo yum -y update
-sudo yum install -y nano screen
-sudo yum install -y xfsprogs
+sudo yum install -y ${PROGRAMS}
 }
 
-function install26() {
+function installdebian() {
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install -y ${PROGRAMS}
+}
+
+function installos() {
+case $OSVERSION in
+  debian) installdebian
+	return 0;
+  ;;
+  rhel) installrhel;
+	return 0;
+  ;;
+esac
+echo No OS detected
+return 1;
+}
+
+function installmongo() {
+case $OSVERSION in
+  debian) mongoinstalldebain26
+	return 0;
+  ;;
+  rhel) mongoinstallrhel26;
+	return 0;
+  ;;
+esac
+echo No OS detected
+return 1;
+}
+
+function mongoinstallrhel26() {
 echo "[mongodb-enterprise-2.6]
 name=MongoDB Enterprise 2.6 Repository
 baseurl=https://repo.mongodb.com/yum/redhat/6Server/mongodb-enterprise/2.6/x86_64/
@@ -42,7 +79,16 @@ sudo yum install -y mongodb-enterprise
 sudo chkconfig mongod off
 }
 
-function diskssetup() {
+function mongoinstalldebian26() {
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+service mongod stop
+update-rc.d mongod disable
+}
+
+function disksetup() {
 eval mkdir -p /data/{$DISKSTART..$DISKEND}
 mount -a
 eval mkdir -p /data/{$DISKSTART..$DISKEND}/{$MONGOSTART..$MONGOEND}/db
@@ -51,38 +97,33 @@ for d in /data/*; do
 done
 }
 
-function disknoraid() {
+function fstabsetup() {
 cat /etc/fstab
 sed -i '/cloudconfig/d' /etc/fstab
 umount -l /dev/sdb
 umount -l /dev/xvdb
 
 cat << EOF >> /etc/fstab
-/dev/xvdb    /data/0    auto    noatime    0  2
-/dev/xvdc    /data/1    auto    noatime    0  2
-/dev/xvdd    /data/2    auto    noatime    0  2
-/dev/xvde    /data/3    auto    noatime    0  2
+LABEL=disk0    /data/0    auto    noatime    0  2
+LABEL=disk1    /data/1    auto    noatime    0  2
+LABEL=disk2    /data/2    auto    noatime    0  2
+LABEL=disk3    /data/3    auto    noatime    0  2
 EOF
-
-#format disks
-for f in b c d e; do
-  DISK=/dev/xvd$f
-  if [ -a ${DISK} ]; then
-     mkfs.xfs ${DISK}
-  fi
-done
-
-disksetup
 }
 
-function disksraid0() {
-cat << EOF >> /etc/fstab
-label=disk0    /data/0    auto    noatime    0  2
-label=disk1    /data/1    auto    noatime    0  2
-label=disk2    /data/2    auto    noatime    0  2
-label=disk3    /data/3    auto    noatime    0  2
-EOF
+function initdisknoraid() {
+#format disks
+for f in b c d e; do
+  count=0
+  DISK=/dev/xvd$f
+  if [ -a ${DISK} ]; then
+     mkfs.xfs -Ldisk$count ${DISK}
+     count=$((count+1))
+  fi
+done
+}
 
+function initdiskraid0() {
 sudo mdadm --create /dev/md0 --level=0 --raid-devices=2 /dev/xvdb /dev/xvdc
 sudo mdadm --create /dev/md1 --level=0 --raid-devices=2 /dev/xvdd /dev/xvde
 sudo mdadm --create /dev/md2 --level=0 --raid-devices=2 /dev/xvdf /dev/xvdg
@@ -96,8 +137,6 @@ for f in 0 1 2 3; do
     mkfs.xfs -L disk$f ${DISK}
   fi
 done
-
-disksetup
 }
 
 function mongosetup() {
@@ -197,7 +236,9 @@ nohttpinterface=true
 #sslMode=requireSSL
 #sslPEMKeyFile=/data/mongodb.pem
 EOF
+}
 
+function mongoconfigs() {
 MONGOPATH=/data/9/0
 mkdir -p $MONGOPATH
 \cp -f /data/mongos.conf $MONGOPATH
@@ -238,7 +279,7 @@ done
 
 function mongostart() {
 for d in /data/*/*; do
-  [ -f $d/mongod.conf ] && numactl -i=all mongod -f $d/mongod.conf
+  [ -f $d/mongod.conf ] && numactl --interleave=all  mongod -f $d/mongod.conf
 done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
@@ -254,7 +295,7 @@ count=0
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
     node=$((count%NUMANODECOUNT))
-    [ -f $d/mongod.conf ] && numactl -i=$node -l mongod -f $d/mongod.conf
+    [ -f $d/mongod.conf ] && numactl --cpunodebind=$node -localalloc mongod -f $d/mongod.conf
     count=$((count+1))
   done
 done
@@ -269,6 +310,7 @@ done
 
 
 function stuff() {
+cat << EOF >> ~/file
 var dbname="intagg"
 var nsname="intagg.rollup"
 sh.setBalancerState(false)
@@ -280,6 +322,7 @@ use config
 db.chunks.aggregate({$group: {_id: { ns: "$ns", shard: "$shard" }, count: {$sum : 1}}}, {$match: {count: {$ne: 2}}})
 #$ne should be equal to count of ns
 db.chunks.aggregate({$group: {_id: { max: "$max" }, count: {$sum : 1}}}, {$match: {count: {$ne: 2}}})
+EOF
 }
 
 
@@ -297,7 +340,7 @@ for d in /data/*/*/; do
 done
 }
 
-function() exportjson{
+function exportjson() {
 #
 # Export all to json
 #
@@ -408,18 +451,23 @@ case $USERCMD in
 	start) mongostart
 	;;
 
-
 	startnuma) mongostartnuma
 	;;
 
 	stop) pkill mongod; pkill mongos
 	;;
 
-	install)
-		installrhel
-		install26
-		installraid0
+	onstart)
+		initdiskraid0
+		disksetup
 		mongosetup
+		mongoconfigs
+	;;
+
+	install)
+		installmongo
+		installos
+		fstabsetup
 	;;
 	addshards) mongoaddshards
 	;;
