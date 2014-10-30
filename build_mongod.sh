@@ -346,7 +346,7 @@ function exportjson() {
 #
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    mongoexport -d hub -c inv_trans_20140706_week --port 270$d$m -o /data/$d/$m/export.json &
+     mongoexport -d hub -c transactions_raw --port 270$d$m -o /data/$d/$m/export.json &
   done
 done
 }
