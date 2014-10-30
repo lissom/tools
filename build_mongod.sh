@@ -369,7 +369,7 @@ function toloader() {
 MACHINE=`cat ~/id`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    scp /data/$d/$m/export.tar.bz2 l1:/data/jda/jda$MACHINE$d$m.tar.bz2 &
+    scp /data/$d/$m/export.json.tar.bz2 l1:/data/jda/jda$MACHINE$d$m.tar.bz2 &
     sleep 1
   done
 done
