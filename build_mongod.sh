@@ -465,7 +465,7 @@ case $USERCMD in
 	dotar)tarjson
 	;;
 
-	dotartoloader)tartoloader
+	doloader)toloader
 	;;
 
 	onstart)
