@@ -226,7 +226,7 @@ logpath=/data/DISK/MONGO/mongos.log
 logappend=true
 fork=true
 port=270DISKMONGO
-configdb=172.31.20.42:27099,172.31.20.40:27099,172.31.20.41:27099
+configdb=172.31.13.122:27099,172.31.13.123:27099,172.31.13.124:27099
 pidfilepath=/data/DISK/MONGO/mongos.pid
 noAutoSplit=true
 #bind_ip=
@@ -273,6 +273,19 @@ for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
     echo "sh.addShard(\"$HOST:270$d$m\")" | mongo --port 27090
   done
+done
+}
+
+function mongobarestart() {
+for d in /data/*/*; do
+  [ -f $d/mongod.conf ] && mongod -f $d/mongod.conf
+done
+#just in case pkill mongo was used
+[ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
+sleep 1
+# must be seperate so config servers come up first
+for d in /data/*/*; do
+  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
 done
 }
 
@@ -369,7 +382,20 @@ function toloader() {
 MACHINE=`cat ~/id`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    scp /data/$d/$m/export.json.tar.bz2 l1:/data/jda/jda$MACHINE$d$m.tar.bz2 &
+    scp /data/$d/$m/export.json.tar.bz2 l1:/data/jda/jda$MACHINE$d$m.tar.bz2
+    sleep 1
+  done
+done
+}
+
+function toloaderjson() {
+#
+# Move files to loader machine
+#
+MACHINE=`cat ~/id`
+for d in $(seq $DISKSTART $DISKEND); do
+  for m in $(seq $MONGOSTART $MONGOEND); do
+    scp /data/$d/$m/export.json l1:/data/jda/jda$MACHINE$d$m.json &
     sleep 1
   done
 done
@@ -450,6 +476,9 @@ case $USERCMD in
 	start) mongostart
 	;;
 
+	startbare) mongobarestart
+	;;
+
 	startnuma) mongostartnuma
 	;;
 
@@ -468,6 +497,9 @@ case $USERCMD in
 	doloader)toloader
 	;;
 
+	doloaderjson)toloaderjson
+	;;
+
 	onstart)
 		initdiskraid0
 		disksetup
@@ -480,6 +512,7 @@ case $USERCMD in
 		installos
 		fstabsetup
 	;;
+
 	addshards) mongoaddshards
 	;;
 
