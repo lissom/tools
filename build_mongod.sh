@@ -31,18 +31,18 @@ set -u
 # END VARIALBES
 #
 
-function installrhel() {
+installrhel() {
 sudo yum -y update
 sudo yum install -y ${PROGRAMS}
 }
 
-function installdebian() {
+installdebian() {
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install -y ${PROGRAMS}
 }
 
-function installos() {
+installos() {
 case $OSVERSION in
   debian) installdebian
 	return 0;
@@ -55,7 +55,7 @@ echo No OS detected
 return 1;
 }
 
-function installmongo() {
+installmongo() {
 case $OSVERSION in
   debian) mongoinstalldebain26
 	return 0;
@@ -68,7 +68,7 @@ echo No OS detected
 return 1;
 }
 
-function mongoinstallrhel26() {
+mongoinstallrhel26() {
 echo "[mongodb-enterprise-2.6]
 name=MongoDB Enterprise 2.6 Repository
 baseurl=https://repo.mongodb.com/yum/redhat/6Server/mongodb-enterprise/2.6/x86_64/
@@ -78,7 +78,7 @@ sudo yum install -y mongodb-enterprise
 sudo chkconfig mongod off
 }
 
-function mongoinstalldebian26() {
+mongoinstalldebian26() {
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
 echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
 sudo apt-get update
@@ -87,7 +87,7 @@ service mongod stop
 update-rc.d mongod disable
 }
 
-function disksetup() {
+disksetup() {
 eval mkdir -p /data/{$DISKSTART..$DISKEND}
 mount -a
 eval mkdir -p /data/{$DISKSTART..$DISKEND}/{$MONGOSTART..$MONGOEND}/db
@@ -96,7 +96,7 @@ for d in /data/*; do
 done
 }
 
-function fstabsetup() {
+fstabsetup() {
 cat /etc/fstab
 sed -i '/cloudconfig/d' /etc/fstab
 umount -l /dev/sdb
@@ -110,7 +110,7 @@ LABEL=disk3    /data/3    auto    noatime    0  2
 EOF
 }
 
-function initdisknoraid() {
+initdisknoraid() {
 #format disks
 for f in b c d e; do
   count=0
@@ -122,7 +122,7 @@ for f in b c d e; do
 done
 }
 
-function initdiskraid0() {
+initdiskraid0() {
 sudo mdadm --create /dev/md0 --level=0 --raid-devices=2 /dev/xvdb /dev/xvdc
 sudo mdadm --create /dev/md1 --level=0 --raid-devices=2 /dev/xvdd /dev/xvde
 sudo mdadm --create /dev/md2 --level=0 --raid-devices=2 /dev/xvdf /dev/xvdg
@@ -138,7 +138,7 @@ for f in 0 1 2 3; do
 done
 }
 
-function mongosetup() {
+mongosetup() {
 cat << EOF >> /data/mongodb.pem
 -----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDL8gU/uWEfYaYm
@@ -237,7 +237,7 @@ nohttpinterface=true
 EOF
 }
 
-function mongoconfigs() {
+mongoconfigs() {
 MONGOPATH=/data/9/0
 mkdir -p $MONGOPATH
 \cp -f /data/mongos.conf $MONGOPATH
@@ -264,7 +264,7 @@ chown -R mongod:mongod /data
 }
 
 
-function mongoaddshards() {
+mongoaddshards() {
 #
 # WARNING THIS CANNOT BE RUN IN PARALLEL AS OF 2.6.3
 #
@@ -276,7 +276,7 @@ for d in $(seq $DISKSTART $DISKEND); do
 done
 }
 
-function mongobarestart() {
+mongobarestart() {
 for d in /data/*/*; do
   [ -f $d/mongod.conf ] && mongod -f $d/mongod.conf
 done
@@ -289,7 +289,7 @@ for d in /data/*/*; do
 done
 }
 
-function mongostart() {
+mongostart() {
 for d in /data/*/*; do
   [ -f $d/mongod.conf ] && numactl --interleave=all  mongod -f $d/mongod.conf
 done
@@ -302,7 +302,7 @@ sleep 1
 #done
 }
 
-function mongostartnuma() {
+mongostartnuma() {
 count=0
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
@@ -321,7 +321,7 @@ done
 }
 
 
-function stuff() {
+stuff() {
 cat << EOF >> ~/file
 var dbname="intagg"
 var nsname="intagg.rollup"
@@ -340,7 +340,7 @@ EOF
 
 
 
-function clean() {
+clean() {
 #
 # REMOVE ALL DATA
 #
@@ -352,7 +352,7 @@ for d in /data/*/*/; do
 done
 }
 
-function dump() {
+dump() {
 #
 # Export all to json
 #
@@ -363,7 +363,7 @@ for d in $(seq $DISKSTART $DISKEND); do
 done
 }
 
-function exportjson() {
+exportjson() {
 #
 # Export all to json
 #
@@ -375,7 +375,7 @@ done
 }
 
 
-function tarjson() {
+tarjson() {
 #
 # tar all files
 #
@@ -387,7 +387,7 @@ for d in $(seq $DISKSTART $DISKEND); do
 done
 }
 
-function toloader() {
+toloader() {
 #
 # Move files to loader machine
 #
@@ -400,7 +400,7 @@ for d in $(seq $DISKSTART $DISKEND); do
 done
 }
 
-function toloaderjson() {
+toloaderjson() {
 #
 # Move files to loader machine
 #
@@ -413,7 +413,7 @@ for d in $(seq $DISKSTART $DISKEND); do
 done
 }
 
-function runrollup() {
+runrollup() {
 #
 # Run script on endpoint individually
 #
@@ -427,7 +427,7 @@ for d in $(seq $DISKSTART $DISKEND); do
 done
 }
 
-function agg1() {
+agg1() {
 #
 # Run a stage1 aggregation
 #
@@ -440,7 +440,7 @@ for host in "${HOSTS[@]}"; do
 done
 }
 
-function aggnext() {
+aggnext() {
 #
 # Run the composit aggregations
 # Assumes mongoS on the runner
@@ -450,7 +450,7 @@ for job in "${WEEKLYJOBS[@]}"; do
 done
 }
 
-function installmunin() {
+installmunin() {
 #install munin-node
 yum -y install munin-node
 ln -s /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
@@ -471,7 +471,7 @@ chkconfig munin-node on
 ps aux | grep munin
 }
 
-function installmonitor() {
+installmonitor() {
 #To check munin node:
 #yum -y install telnet
 #telnet localhost 4949
