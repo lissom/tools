@@ -10,6 +10,8 @@ DISKSTART=0
 DISKEND=3
 MONGOSTART=0
 MONGOEND=4
+MONGOSHOST=172.31.15.217
+MONGOSPORT=27017
 #used for modulo so 1 indexed
 NUMANODECOUNT=2
 if [ ! -z $2 ]; then MONGOEND=$2; fi
@@ -274,7 +276,7 @@ mongoaddshards() {
 HOST=`hostname`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    echo "sh.addShard(\"$HOST:270$d$m\")" | mongo --port 27090
+    echo "sh.addShard(\"$HOST:270$d$m\")" | mongo --host $MONGOSHOST --port $MONGOSPORT
   done
 done
 }
