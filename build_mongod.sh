@@ -9,7 +9,7 @@ USERCMD=$1
 DISKSTART=0
 DISKEND=3
 MONGOSTART=0
-MONGOEND=3
+MONGOEND=8
 #used for modulo so 1 indexed
 NUMANODECOUNT=2
 if [ ! -z $2 ]; then MONGOEND=$2; fi
@@ -297,9 +297,9 @@ done
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
 sleep 1
 # must be seperate so config servers come up first
-for d in /data/*/*; do
-  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
-done
+#for d in /data/*/*; do
+#  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
+#done
 }
 
 function mongostartnuma() {
@@ -340,7 +340,7 @@ EOF
 
 
 
-function clear() {
+function clean() {
 #
 # REMOVE ALL DATA
 #
@@ -352,16 +352,28 @@ for d in /data/*/*/; do
 done
 }
 
+function dump() {
+#
+# Export all to json
+#
+for d in $(seq $DISKSTART $DISKEND); do
+  for m in $(seq $MONGOSTART $MONGOEND); do
+     mongodump -d hub -c transactions_jda --port 270$d$m -o - > /data/$d/$m/dump.bson &
+  done
+done
+}
+
 function exportjson() {
 #
 # Export all to json
 #
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-     mongoexport -d hub -c transactions_raw --port 270$d$m -o /data/$d/$m/export.json &
+     mongoexport -d hub -c transactions_jda --port 270$d$m -o /data/$d/$m/export.json &
   done
 done
 }
+
 
 function tarjson() {
 #
@@ -382,7 +394,7 @@ function toloader() {
 MACHINE=`cat ~/id`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    scp /data/$d/$m/export.json.tar.bz2 l1:/data/jda/jda$MACHINE$d$m.tar.bz2
+    scp /data/$d/$m/dump/hub/transactions_jda.bson l1:/data/dump/dump$MACHINE$d$m.bson &
     sleep 1
   done
 done
@@ -485,6 +497,9 @@ case $USERCMD in
 	stop) pkill mongod; pkill mongos
 	;;
 
+	dodump) dump
+	;;
+
 	addtocluster) mongoaddshards
 	;;
 
@@ -516,6 +531,9 @@ case $USERCMD in
 	addshards) mongoaddshards
 	;;
 
+	doclean) clean
+	;;
 
-
+	*)echo $USERCMD is not recognized
+	;;
 esac
