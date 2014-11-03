@@ -18,9 +18,9 @@ if [ ! -z $4 ]; then NUMANODECOUNT=$4; fi
 PROGRAMS="nano screen xfsprogs mdadm numactl"
 
 grep -q "debian" /etc/os-release
-if [ $? == 0 ]; then OSVERSION="debian"; fi
+if [ $? -eq 0 ]; then OSVERSION="debian"; fi
 grep -q "rhel" /etc/os-release
-if [ $? == 0 ]; then OSVERSION="rhel"; fi
+if [ $? -eq 0 ]; then OSVERSION="rhel"; fi
 
 set -u
 
