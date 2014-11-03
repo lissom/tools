@@ -9,7 +9,7 @@ USERCMD=$1
 DISKSTART=0
 DISKEND=3
 MONGOSTART=0
-MONGOEND=8
+MONGOEND=4
 #used for modulo so 1 indexed
 NUMANODECOUNT=2
 if [ ! -z $2 ]; then MONGOEND=$2; fi
@@ -44,7 +44,7 @@ sudo apt-get install -y ${PROGRAMS}
 
 installos() {
 case $OSVERSION in
-  debian) installdebian
+  debian) installdebian;
 	return 0;
   ;;
   rhel) installrhel;
@@ -57,7 +57,7 @@ return 1;
 
 installmongo() {
 case $OSVERSION in
-  debian) mongoinstalldebain26
+  debian) mongoinstalldebian26;
 	return 0;
   ;;
   rhel) mongoinstallrhel26;
@@ -88,11 +88,14 @@ update-rc.d mongod disable
 }
 
 disksetup() {
-eval mkdir -p /data/{$DISKSTART..$DISKEND}
+for mydir in $(seq $DISKSTART $DISKEND); do
+  mkdir -p /data/$mydir
+done
 mount -a
-eval mkdir -p /data/{$DISKSTART..$DISKEND}/{$MONGOSTART..$MONGOEND}/db
-for d in /data/*; do
-  [ -d $d/lost+found ] && rmdir $d/lost+found;    
+for mydir in $(seq $DISKSTART $DISKEND); do
+  for xxdir in $(seq $MONGOSTART $MONGOEND); do
+    mkdir -p /data/$mydir/$xxdir/db
+  done
 done
 }
 
@@ -132,7 +135,7 @@ sudo mdadm --create /dev/md3 --level=0 --raid-devices=2 /dev/xvdh /dev/xvdi
 #format disks
 for f in 0 1 2 3; do
   DISK=/dev/md$f
-  if [ -a ${DISK} ]; then
+  if [ -b ${DISK} ]; then
     mkfs.xfs -L disk$f ${DISK}
   fi
 done
