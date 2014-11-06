@@ -80,6 +80,17 @@ sudo yum install -y mongodb-enterprise
 sudo chkconfig mongod off
 }
 
+mongoinstallrhel24() {
+sudo rm /etc/yum.repos.d/mongodb.repo
+echo "[mongodb 2.4]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
+yum install mongo-10gen mongo-10gen-server --exclude mongodb-org,mongodb-org-server
+sudo chkconfig mongod off
+}
+
 mongoinstalldebian26() {
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
 echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
