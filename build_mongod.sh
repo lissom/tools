@@ -82,12 +82,13 @@ sudo chkconfig mongod off
 
 mongoinstallrhel24() {
 sudo rm /etc/yum.repos.d/mongodb.repo
+yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
 echo "[mongodb 2.4]
 name=MongoDB Repository
 baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
 gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
-yum install mongo-10gen mongo-10gen-server --exclude mongodb-org,mongodb-org-server
+yum install -y mongo-10gen mongo-10gen --exclude mongodb-org,mongodb-org-server
 sudo chkconfig mongod off
 }
 
