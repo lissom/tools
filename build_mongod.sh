@@ -71,6 +71,8 @@ return 1;
 }
 
 mongoinstallrhel26() {
+sudo \rm /etc/yum.repos.d/mongodb.repo
+yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
 echo "[mongodb-enterprise-2.6]
 name=MongoDB Enterprise 2.6 Repository
 baseurl=https://repo.mongodb.com/yum/redhat/6Server/mongodb-enterprise/2.6/x86_64/
@@ -81,7 +83,7 @@ sudo chkconfig mongod off
 }
 
 mongoinstallrhel24() {
-sudo rm /etc/yum.repos.d/mongodb.repo
+sudo \rm /etc/yum.repos.d/mongodb.repo
 yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
 echo "[mongodb 2.4]
 name=MongoDB Repository
@@ -505,7 +507,8 @@ installmonitor() {
 #install the MMS Agent
 curl -OL https://mms.mongodb.com/download/agent/monitoring/mongodb-mms-monitoring-agent-2.4.0.101-1.x86_64.rpm
 sudo rpm -U mongodb-mms-monitoring-agent-2.4.0.101-1.x86_64.rpm
-sed -i 's/^mmsApiKey=.*/mmsApiKey=1ed91a1f84ec126d4aa8dbbd010e4281/' /etc/mongodb-mms/monitoring-agent.config 
+sed -i 's/^mmsApiKey=.*/mmsApiKey=1ed91a1f84ec126d4aa8dbbd010e4281/' /etc/mongodb-mms/monitoring-agent.config
+/etc/init.d/mongodb-mms-monitoring-agent start
 #sudo nano /etc/mongodb-mms/monitoring-agent.config
 }
 
