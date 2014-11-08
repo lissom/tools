@@ -10,6 +10,7 @@ if [ `id -u` -eq 0 ]; then
 
 if [ -z $1 ]; then rakb=16; else rabk=$1; fi
 if [ -z $2 ]; then sched=noop; else sched=$2; fi
+if [ -z $2 ]; then rotational=0; else rotate=$2; fi
 
 #AMAZON instances remove the cloud config
 umount /dev/xvdb
@@ -58,7 +59,7 @@ rm -rf /etc/security/limits.d/*
 #Note the scheduler is set to "noop", bare metal probably want to remove that/cfq
 #For non-flash, rotational=1, ra should probably be adjusted too
 cat << EOF > /etc/udev/rules.d/99-mongo-vm-devices.rules
-SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}", ATTR{queue/add_random}="0”, ATTR{queue/rotational}="0”, ATTR{queue/rq_affinity}="2"
+SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}", ATTR{queue/add_random}="0”, ATTR{queue/rotational}="${rotate}”, ATTR{queue/rq_affinity}="2"
 EOF
 else 
 echo This script must be run as root
