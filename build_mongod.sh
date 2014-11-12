@@ -12,6 +12,7 @@ MONGOSTART=0
 MONGOEND=4
 MONGOSHOST=172.31.15.217
 MONGOSPORT=27017
+AGENTHOST=172.31.15.217
 #used for modulo so 1 indexed
 NUMANODECOUNT=2
 if [ ! -z $2 ]; then MONGOEND=$2; fi
@@ -79,7 +80,7 @@ sed -i '/^allow/d' /etc/munin/munin-node.conf
 #this needs to be set to the munin node monitor
 cat << EOF >> /etc/munin/munin-node.conf
 allow 127.0.0.1
-allow 172.31.20.42
+allow $AGENTHOST
 EOF
 #cat <<EOF>> /etc/munin/plugin-conf.d/munin-node 
 #[iostat]
