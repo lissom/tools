@@ -14,7 +14,7 @@ if [ -z $3 ]; then rotate=0; else rotate=$3; fi
 
 sed -i '/exit 0/d' /etc/rc.local
 cat << EOF >> /etc/rc.local
-#Will use madvise if available, if not will use never
+#Uncommnet madise to use madvise if available (if not will use never)
 if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
    echo never > /sys/kernel/mm/transparent_hugepage/enabled
    #echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
