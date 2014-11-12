@@ -12,10 +12,6 @@ if [ -z $1 ]; then rakb=16; else rabk=$1; fi
 if [ -z $2 ]; then sched=noop; else sched=$2; fi
 if [ -z $3 ]; then rotate=0; else rotate=$3; fi
 
-#AMAZON instances remove the cloud config
-umount /dev/xvdb
-sed -i '/cloudconfig/d' /etc/fstab
-
 sed -i '/exit 0/d' /etc/rc.local
 cat << EOF >> /etc/rc.local
 #Will use madvise if available, if not will use never
