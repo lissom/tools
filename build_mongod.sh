@@ -70,6 +70,27 @@ echo No OS detected
 return 1;
 }
 
+munininstallrhel() {
+#install munin-node
+yum -y install munin-node
+ln -s /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
+ln -s /usr/share/munin/plugins/iostat_ios /etc/munin/plugins/iostat_ios
+sed -i '/^allow/d' /etc/munin/munin-node.conf
+#this needs to be set to the munin node monitor
+cat << EOF >> /etc/munin/munin-node.conf
+allow 127.0.0.1
+allow 172.31.20.42
+EOF
+#cat <<EOF>> /etc/munin/plugin-conf.d/munin-node 
+#[iostat]
+#    env.SHOW_NUMBERED 1
+#EOF
+
+service munin-node restart
+chkconfig munin-node on
+ps aux | grep munin
+}
+
 mongoinstallrhel26() {
 sudo \rm /etc/yum.repos.d/mongodb.repo
 yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
@@ -80,6 +101,7 @@ gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 sudo yum install -y mongodb-enterprise
 sudo chkconfig mongod off
+munininstallrhel
 }
 
 mongoinstallrhel24() {
@@ -92,6 +114,7 @@ gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 yum install -y mongo-10gen mongo-10gen --exclude mongodb-org,mongodb-org-server
 sudo chkconfig mongod off
+munininstallrhel
 }
 
 mongoinstalldebian26() {
@@ -481,27 +504,6 @@ aggnext() {
 for job in "${WEEKLYJOBS[@]}"; do
   ~/test1 -a ~/jda/$job -u localhost:27017 -r intagg.rollup -w skip &
 done
-}
-
-installmunin() {
-#install munin-node
-yum -y install munin-node
-ln -s /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
-ln -s /usr/share/munin/plugins/iostat_ios /etc/munin/plugins/iostat_ios
-sed -i '/^allow/d' /etc/munin/munin-node.conf
-#this needs to be set to the munin node monitor
-cat << EOF >> /etc/munin/munin-node.conf
-allow 127.0.0.1
-allow 172.31.20.42
-EOF
-#cat <<EOF>> /etc/munin/plugin-conf.d/munin-node 
-#[iostat]
-#    env.SHOW_NUMBERED 1
-#EOF
-
-service munin-node restart
-chkconfig munin-node on
-ps aux | grep munin
 }
 
 installmonitor() {
