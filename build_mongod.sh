@@ -125,10 +125,10 @@ done
 }
 
 fstabsetup() {
-cat /etc/fstab
+if [ ! -f /etc/fstab.ori ]; then cp /etc/fstab /etc/fstab.ori; fi
+
+for device in `grep cloudconfig /etc/fstab | awk '{print $1}'`; do umount -l ${device}; done
 sed -i '/cloudconfig/d' /etc/fstab
-umount -l /dev/sdb
-umount -l /dev/xvdb
 
 cat << EOF >> /etc/fstab
 LABEL=disk0    /data/0    auto    noatime    0  2
@@ -136,6 +136,11 @@ LABEL=disk1    /data/1    auto    noatime    0  2
 LABEL=disk2    /data/2    auto    noatime    0  2
 LABEL=disk3    /data/3    auto    noatime    0  2
 EOF
+
+cat /etc/fstab
+pause 2
+mount 
+pause 2
 }
 
 initdisknoraid() {
