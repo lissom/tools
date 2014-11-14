@@ -22,8 +22,6 @@ fi
 if test -f /sys/kernel/mm/{redhat,}transparent_hugepage/defrag; then
    echo never > /sys/kernel/mm/transparent_hugepage/defrag
    #echo madvise > /sys/kernel/mm/transparent_hugepage/defrag
-   #for rhel yes/no
-   echo no > /sys/kernel/mm/transparent_hugepage/defrag
 fi
 
 exit 0
