@@ -13,6 +13,8 @@ MONGOEND=4
 MONGOSHOST=172.31.15.217
 MONGOSPORT=27017
 AGENTHOST=172.31.15.217
+#should match RA, which I usually set to 16
+MDADM_CHUNK=16
 #used for modulo so 1 indexed
 NUMANODECOUNT=2
 if [ ! -z $2 ]; then MONGOEND=$2; fi
@@ -180,10 +182,10 @@ done
 }
 
 initdiskraid0() {
-sudo mdadm --create /dev/md0 --level=0 --raid-devices=2 /dev/xvdb /dev/xvdc
-sudo mdadm --create /dev/md1 --level=0 --raid-devices=2 /dev/xvdd /dev/xvde
-sudo mdadm --create /dev/md2 --level=0 --raid-devices=2 /dev/xvdf /dev/xvdg
-sudo mdadm --create /dev/md3 --level=0 --raid-devices=2 /dev/xvdh /dev/xvdi
+sudo mdadm --create /dev/md0 --chunk=${MDADM_CHUNK} --level=0 --raid-devices=2 /dev/xvdb /dev/xvdc
+sudo mdadm --create /dev/md1 --chunk=${MDADM_CHUNK} --level=0 --raid-devices=2 /dev/xvdd /dev/xvde
+sudo mdadm --create /dev/md2 --chunk=${MDADM_CHUNK} --level=0 --raid-devices=2 /dev/xvdf /dev/xvdg
+sudo mdadm --create /dev/md3 --chunk=${MDADM_CHUNK} --level=0 --raid-devices=2 /dev/xvdh /dev/xvdi
 
 
 #format disks
