@@ -60,6 +60,9 @@ EOF
 #For a single queue device (as in the case of AWS instances), the value of two tunables should be the same.
 #/sys/class/net/*/rps_flow_cnt
 #/sys/class/net/eth?/queues/rx-0 rps_cpus=0xf It is set as a bitmask of CPUs. Disable when set to zero (means packets are processed on the interrupted CPU). Set to all CPU or CPUs that are part of the same NUMA node (large server). Setting value 0xf will cause CPU 0,1,2,3 to do network stack processing 
+#For high speed systems consider excluding cpu processing the interrupt from processing packs
+#cat /proc/irq/<IRQ>/smp_affinity
+#cat /proc/interrupts
 }
 
 sed -i '/exit 0/d' /etc/rc.local
