@@ -86,9 +86,11 @@ fi
 #set keepalive and zone_reclaim_mode
 sed -i '/net.ipv4.tcp_keepalive_time/d' /etc/sysctl.conf
 sed -i '/vm.zone_reclaim_mode/d' /etc/sysctl.conf
+sed -i '/kernel.pid_max/d' /etc/sysctl.conf
 cat << EOF >> /etc/sysctl.conf
 net.ipv4.tcp_keepalive_time = 300
 vm.zone_reclaim_mode = 0
+kernel.pid_max = 4194303
 EOF
 sysctl -p
 
