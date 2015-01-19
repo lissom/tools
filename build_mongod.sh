@@ -156,11 +156,15 @@ if [ ! -f /etc/fstab.ori ]; then cp /etc/fstab /etc/fstab.ori; fi
 for device in `grep cloudconfig /etc/fstab | awk '{print $1}'`; do umount -l ${device}; done
 sed -i '/cloudconfig/d' /etc/fstab
 
+#no barrier is good too on amazon as after power faulure the box is lost anyway
+#nobarrier
+#nodiscard is also possibly a huge performance boost (depends on vendor's implementation of discard)
+#nodiscard
 cat << EOF >> /etc/fstab
-LABEL=disk0    /data/0    auto    noatime    0  2
-LABEL=disk1    /data/1    auto    noatime    0  2
-LABEL=disk2    /data/2    auto    noatime    0  2
-LABEL=disk3    /data/3    auto    noatime    0  2
+LABEL=disk0    /data/0    auto    noatime,nodiratime    0  2
+LABEL=disk1    /data/1    auto    noatime,nodiratime    0  2
+LABEL=disk2    /data/2    auto    noatime,nodiratime    0  2
+LABEL=disk3    /data/3    auto    noatime,nodiratime    0  2
 EOF
 
 cat /etc/fstab
