@@ -67,14 +67,19 @@ EOF
 
 sed -i '/exit 0/d' /etc/rc.local
 cat << EOF >> /etc/rc.local
-#Uncommnet madise to use madvise if available (if not will use never)
-if test -f /sys/kernel/mm/{redhat,}transparent_hugepage/enabled; then
+#Standard Linux THP Settings
+if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
    echo never > /sys/kernel/mm/transparent_hugepage/enabled
-   #echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
 fi
-if test -f /sys/kernel/mm/{redhat,}transparent_hugepage/defrag; then
+if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
    echo never > /sys/kernel/mm/transparent_hugepage/defrag
-   #echo madvise > /sys/kernel/mm/transparent_hugepage/defrag
+fi
+#RHEL + RHEL Clone systems
+if test -f /sys/kernel/mm/redhat_transparent_hugepage/enabled; then
+   echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+fi
+if test -f /sys/kernel/mm/redhat_transparent_hugepage/defrag; then
+   echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
 fi
 
 exit 0
