@@ -1,7 +1,6 @@
 #!/bin/bash
-echo WARNING: This script is setting up all the disks for SSD use, modify udev if needed!!!
-echo WARNING: This script is setting up all the disks for SSD use, modify udev if needed!!!
-echo WARNING: This script is setting up all the disks for SSD use, modify udev if needed!!!
+echo WARNING: This script by default is setting up all the disks for SSD use (These settings will not work well on direct attached spinning disks)
+echo If only mongoD is being run on the machine then how the non-mongoD disks are setup is not relevant
 # $1 read_ahead_kb
 # $2 scheduler
 # $3 rotational (spinning drive = 1; other = 0)
