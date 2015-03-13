@@ -14,56 +14,6 @@ if [ -z $2 ]; then sched=noop; else sched=$2; fi
 if [ -z $3 ]; then rotate=0; else rotate=$3; fi
 if [ -z $4 ]; then nr_requests=256; else nr_requests=$4; fi
 
-
-#if dc doens't exist
-log() { local x=$1 n=2 l=-1;if [ "$2" != "" ];then n=$x;x=$2;fi;while((x));do let l+=1 x/=n;done;echo $l; } 
-#These factors very per system
-tune_cpu() {
-sed -i '/kernel.sched_latency_ns/d' /etc/sysctl.conf
-sed -i '/kernel.sched_min_granularity_ns/d' /etc/sysctl.conf
-cat << EOF >> /etc/sysctl.conf
-#default = 6ms*(1+log2(ncpus)), 8 CPU = 24000000
-kernel.sched_latency_ns=36000000
-#default = 0.75ms*(1+log2(ncpus)), 8 CPU = 3000000
-kernel.sched_min_granularity_ns = 5000000
-EOF
-sysctl -p
-#chrt still needs to be used to change the scheduling: chrt -b -p 0 <PID>
-}
-
-tune_memory() {
-sed -i '/vm.dirty_ratio/d' /etc/sysctl.conf
-sed -i '/vm.dirty_background_ratio/d' /etc/sysctl.conf
-sed -i '/vm.dirty_expire_centisecs/d' /etc/sysctl.conf
-sed -i '/vm.swappiness/d' /etc/sysctl.conf
-cat << EOF >> /etc/sysctl.conf
-#throttle writes at dirty % memory
-vm.dirty_ratio=70
-#wake up pdflush when dirty pages exceed % memory
-vm.dirty_background_ratio=5
-#dirty data can stay in momory for X milis before flush
-vm.dirty_expire_centisecs=30000
-#Steal application in-active pages?  Zero for no
-vm.swappiness=0
-EOF
-sysctl -p
-}
-
-tune_net() {
-#http://www.slideshare.net/cpwatson/cpn302-yourlinuxamioptimizationandperformance
-#Value of flow is determined by number of active connections. Setting 32768 is a good start for moderately loaded server.
-sed -i '/net.core.rps_sock_flow_entries/d' /etc/sysctl.conf
-cat << EOF >> /etc/sysctl.conf
-net.core.rps_sock_flow_entries = 32768
-EOF
-#For a single queue device (as in the case of AWS instances), the value of two tunables should be the same.
-#/sys/class/net/*/rps_flow_cnt
-#/sys/class/net/eth?/queues/rx-0 rps_cpus=0xf It is set as a bitmask of CPUs. Disable when set to zero (means packets are processed on the interrupted CPU). Set to all CPU or CPUs that are part of the same NUMA node (large server). Setting value 0xf will cause CPU 0,1,2,3 to do network stack processing 
-#For high speed systems consider excluding cpu processing the interrupt from processing packs
-#cat /proc/irq/<IRQ>/smp_affinity
-#cat /proc/interrupts
-}
-
 sed -i '/exit 0/d' /etc/rc.local
 cat << EOF >> /etc/rc.local
 #Standard Linux THP Settings
@@ -116,6 +66,57 @@ rm -rf /etc/security/limits.d/*
 cat << EOF > /etc/udev/rules.d/99-mongo-vm-devices.rules
 SUBSYSTEM=="block", ACTION=="add|change", ATTR{bdi/read_ahead_kb}="${rakb}", ATTR{queue/scheduler}="${sched}", ATTR{queue/add_random}="0", ATTR{queue/rotational}="${rotate}", ATTR{queue/rq_affinity}="2", ATTR{queue/nr_requests}="${nr_requests}"
 EOF
+
+#Nothing below this line will get called unless the script is modified, not needed for standard setups
+#if dc doens't exist
+log() { local x=$1 n=2 l=-1;if [ "$2" != "" ];then n=$x;x=$2;fi;while((x));do let l+=1 x/=n;done;echo $l; } 
+#These factors very per system
+tune_cpu() {
+sed -i '/kernel.sched_latency_ns/d' /etc/sysctl.conf
+sed -i '/kernel.sched_min_granularity_ns/d' /etc/sysctl.conf
+cat << EOF >> /etc/sysctl.conf
+#default = 6ms*(1+log2(ncpus)), 8 CPU = 24000000
+kernel.sched_latency_ns=36000000
+#default = 0.75ms*(1+log2(ncpus)), 8 CPU = 3000000
+kernel.sched_min_granularity_ns = 5000000
+EOF
+sysctl -p
+#chrt still needs to be used to change the scheduling: chrt -b -p 0 <PID>
+}
+
+tune_memory() {
+sed -i '/vm.dirty_ratio/d' /etc/sysctl.conf
+sed -i '/vm.dirty_background_ratio/d' /etc/sysctl.conf
+sed -i '/vm.dirty_expire_centisecs/d' /etc/sysctl.conf
+sed -i '/vm.swappiness/d' /etc/sysctl.conf
+cat << EOF >> /etc/sysctl.conf
+#throttle writes at dirty % memory
+vm.dirty_ratio=70
+#wake up pdflush when dirty pages exceed % memory
+vm.dirty_background_ratio=5
+#dirty data can stay in momory for X milis before flush
+vm.dirty_expire_centisecs=30000
+#Steal application in-active pages?  Zero for no
+vm.swappiness=0
+EOF
+sysctl -p
+}
+
+tune_net() {
+#http://www.slideshare.net/cpwatson/cpn302-yourlinuxamioptimizationandperformance
+#Value of flow is determined by number of active connections. Setting 32768 is a good start for moderately loaded server.
+sed -i '/net.core.rps_sock_flow_entries/d' /etc/sysctl.conf
+cat << EOF >> /etc/sysctl.conf
+net.core.rps_sock_flow_entries = 32768
+EOF
+#For a single queue device (as in the case of AWS instances), the value of two tunables should be the same.
+#/sys/class/net/*/rps_flow_cnt
+#/sys/class/net/eth?/queues/rx-0 rps_cpus=0xf It is set as a bitmask of CPUs. Disable when set to zero (means packets are processed on the interrupted CPU). Set to all CPU or CPUs that are part of the same NUMA node (large server). Setting value 0xf will cause CPU 0,1,2,3 to do network stack processing 
+#For high speed systems consider excluding cpu processing the interrupt from processing packs
+#cat /proc/irq/<IRQ>/smp_affinity
+#cat /proc/interrupts
+}
+
 else 
 echo This script must be run as root
 fi
