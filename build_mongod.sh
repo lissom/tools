@@ -11,8 +11,6 @@ DISKEND=3
 MONGOSTART=0
 MONGOEND=0
 WT_CACHESIZE=100GB
-#There is a bit of magic here, have to know that DISK,MONGO are subbed in with sed
-WT_INDEX_DIR=/data/DISK/MONGO/indexes
 DATABASE=test
 COLLECTION=test
 MONGO_PORT_PREFIX=370
@@ -281,7 +279,7 @@ EOF
 cat << EOF > /data/mongod.conf
 storageEngine=wiredTiger
 wiredTigerCacheSizeGB=$WT_CACHESIZE
-wiredTigerDirectoryForIndexes=$WT_INDEX_DIR
+wiredTigerDirectoryForIndexes=true
 logpath=/data/DISK/MONGO/mongod.log
 logappend=true
 fork=true
@@ -384,7 +382,7 @@ done
 
 mongostart() {
 for d in /data/*/*; do
-  [ -f $d/mongod.conf ] && numactl --interleave=all  mongod -f $d/mongod.conf
+  [ -f $d/mongod.conf ] && numactl --interleave=all mongod -f $d/mongod.conf
 done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
@@ -406,7 +404,7 @@ for d in $(seq $DISKSTART $DISKEND); do
 done
 #start any config servers, should error out on already started servers
 for d in /data/*/*; do
-  [ -f $d/mongod.conf ] && numactl --interleave=all  mongod -f $d/mongod.conf
+  [ -f $d/mongod.conf ] && numactl --interleave=all mongod -f $d/mongod.conf
 done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
