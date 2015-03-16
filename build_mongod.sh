@@ -13,10 +13,12 @@ MONGOEND=0
 WT_CACHESIZE=100GB
 #There is a bit of magic here, have to know that DISK,MONGO are subbed in with sed
 WT_INDEX_DIR=/data/DISK/MONGO/indexes
+DATABASE=test
+COLLECTION=test
 MONGO_PORT_PREFIX=370
-MONGOSHOST=172.31.15.217
+MONGOSHOST=10.70.70.10
 MONGOSPORT=27017
-AGENTHOST=172.31.15.217
+AGENTHOST=10.70.70.10
 #should match RA, which I usually set to 16
 MDADM_CHUNK=16
 #used for modulo so 1 indexed
@@ -302,6 +304,7 @@ pidfilepath=/data/DISK/MONGO/mongod.pid
 #diaglog=0
 #nohints=true
 nohttpinterface=true
+replSet=rs$DISK$MONGO
 #noscripting=true
 # Turns off table scans.  Any query that would do a table scan fails.
 #notablescan=true
@@ -355,11 +358,12 @@ chown -R mongod:mongod /data
 
 mongoaddshards() {
 #
-# WARNING THIS CANNOT BE RUN IN PARALLEL AS OF 2.6.3
+# WARNING THIS CANNOT BE RUN IN PARALLEL
 #
 HOST=`hostname`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
+	echo "rs.initiate()" | mongo --hostname localhost --port $MONGO_PORT_PREFIX$d$m
     echo "sh.addShard(\"$HOST:$MONGO_PORT_PREFIX$d$m\")" | mongo --host $MONGOSHOST --port $MONGOSPORT
   done
 done
@@ -568,9 +572,6 @@ case $USERCMD in
 	;;
 
 	dodump) dump
-	;;
-
-	addtocluster) mongoaddshards
 	;;
 
 	doexport)exportjson
