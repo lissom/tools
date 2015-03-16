@@ -396,8 +396,7 @@ count=0
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
     node=$((count%NUMANODECOUNT))
-    echo
-    [ -f $d/mongod.conf ] && numactl --cpunodebind=$node --localalloc mongod -f $d/mongod.conf
+    [ -f /data/$d/$m/mongod.conf ] && numactl --cpunodebind=$node --localalloc mongod -f /data/$d/$m/mongod.conf
     count=$((count+1))
   done
 done
