@@ -304,7 +304,7 @@ pidfilepath=/data/DISK/MONGO/mongod.pid
 #diaglog=0
 #nohints=true
 nohttpinterface=true
-replSet=rs$DISK$MONGO
+replSet=rsDISKMONGO
 #noscripting=true
 # Turns off table scans.  Any query that would do a table scan fails.
 #notablescan=true
