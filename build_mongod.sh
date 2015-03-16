@@ -9,7 +9,8 @@ USERCMD=$1
 DISKSTART=0
 DISKEND=3
 MONGOSTART=0
-MONGOEND=4
+MONGOEND=0
+MONGO_PORT_PREFIX=370
 MONGOSHOST=172.31.15.217
 MONGOSPORT=27017
 AGENTHOST=172.31.15.217
@@ -26,6 +27,11 @@ grep -q "debian" /etc/os-release
 if [ $? -eq 0 ]; then OSVERSION="debian"; fi
 grep -q "rhel" /etc/os-release
 if [ $? -eq 0 ]; then OSVERSION="rhel"; fi
+if [ -e /etc/centos-release ]; then 
+  OSVERSION="rhel"; 
+  grep -q " 6\." /etc/centos-release
+  if [ $? -eq 0 ]; then OS_RELEASE_MAJOR=6; fi
+fi
 
 set -u
 
@@ -65,7 +71,7 @@ case $OSVERSION in
   debian) mongoinstalldebian26;
 	return 0;
   ;;
-  rhel) mongoinstallrhel26;
+  rhel) mongoinstallrhel30;
 	return 0;
   ;;
 esac
@@ -73,7 +79,10 @@ echo No OS detected
 return 1;
 }
 
-munininstallrhel() {
+munininstallcentos() {
+if [ "$OSVERSION" = "rhel" && OS_RELEASE_MAJOR -eq 6 ]; then
+  rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+fi
 #install munin-node
 yum -y install munin-node
 ln -s /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
@@ -94,6 +103,19 @@ chkconfig munin-node on
 ps aux | grep munin
 }
 
+mongoinstallrhel30() {
+sudo \rm /etc/yum.repos.d/mongodb.repo
+yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
+echo "[mongodb-org-3.0]
+name=MongoDB Repository
+baseurl=http://repo.mongodb.org/yum/redhat/${OS_RELEASE_MAJOR}/mongodb-org/3.0/x86_64/
+gpgcheck=0
+enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
+sudo yum install -y mongodb-org
+sudo chkconfig mongod off
+munininstallcentos
+}
+
 mongoinstallrhel26() {
 sudo \rm /etc/yum.repos.d/mongodb.repo
 yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
@@ -104,7 +126,7 @@ gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 sudo yum install -y mongodb-enterprise
 sudo chkconfig mongod off
-munininstallrhel
+munininstallcentos
 }
 
 mongoinstallrhel24() {
@@ -117,7 +139,7 @@ gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 yum install -y mongo-10gen mongo-10gen --exclude mongodb-org,mongodb-org-server
 sudo chkconfig mongod off
-munininstallrhel
+munininstallcentos
 }
 
 mongoinstalldebian26() {
@@ -150,21 +172,17 @@ for mydir in $(seq $DISKSTART $DISKEND); do
 done
 }
 
-fstabsetup() {
+amazon_fstabsetup() {
 if [ ! -f /etc/fstab.ori ]; then cp /etc/fstab /etc/fstab.ori; fi
 
 for device in `grep cloudconfig /etc/fstab | awk '{print $1}'`; do umount -l ${device}; done
 sed -i '/cloudconfig/d' /etc/fstab
 
-#no barrier is good too on amazon as after power faulure the box is lost anyway
-#nobarrier
-#nodiscard is also possibly a huge performance boost (depends on vendor's implementation of discard)
-#nodiscard
 cat << EOF >> /etc/fstab
-LABEL=disk0    /data/0    auto    noatime,nodiratime    0  2
-LABEL=disk1    /data/1    auto    noatime,nodiratime    0  2
-LABEL=disk2    /data/2    auto    noatime,nodiratime    0  2
-LABEL=disk3    /data/3    auto    noatime,nodiratime    0  2
+LABEL=disk0    /data/0    auto    noatime    0  2
+LABEL=disk1    /data/1    auto    noatime    0  2
+LABEL=disk2    /data/2    auto    noatime    0  2
+LABEL=disk3    /data/3    auto    noatime    0  2
 EOF
 
 cat /etc/fstab
@@ -254,10 +272,11 @@ kJ/fII7AaJfHwlAaoAc8IvDHqyMzpGX6pg3FfYD52ttPoewtBlWQbkAXcQ==
 EOF
 
 cat << EOF > /data/mongod.conf
+storageEngine=wiredTiger
 logpath=/data/DISK/MONGO/mongod.log
 logappend=true
 fork=true
-port=270DISKMONGO
+port=370DISKMONGO
 dbpath=/data/DISK/MONGO/db
 pidfilepath=/data/DISK/MONGO/mongod.pid
 #bind_ip=
@@ -288,8 +307,8 @@ cat << EOF > /data/mongos.conf
 logpath=/data/DISK/MONGO/mongos.log
 logappend=true
 fork=true
-port=270DISKMONGO
-configdb=172.31.13.122:27099,172.31.13.123:27099,172.31.13.124:27099
+port=27017
+configdb=10.70.70.10:37099
 pidfilepath=/data/DISK/MONGO/mongos.pid
 noAutoSplit=true
 #bind_ip=
@@ -334,7 +353,7 @@ mongoaddshards() {
 HOST=`hostname`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    echo "sh.addShard(\"$HOST:270$d$m\")" | mongo --host $MONGOSHOST --port $MONGOSPORT
+    echo "sh.addShard(\"$HOST:$MONGO_PORT_PREFIX$d$m\")" | mongo --host $MONGOSHOST --port $MONGOSPORT
   done
 done
 }
@@ -359,10 +378,10 @@ done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
 sleep 1
-# must be seperate so config servers come up first
-#for d in /data/*/*; do
-#  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
-#done
+ must be seperate so config servers come up first
+for d in /data/*/*; do
+  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
+done
 }
 
 mongostartnuma() {
@@ -421,7 +440,7 @@ dump() {
 #
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-     mongodump -d hub -c transactions_jda --port 270$d$m -o - > /data/$d/$m/dump.bson &
+     mongodump -d hub -c transactions_jda --port $MONGO_PORT_PREFIX$d$m -o - > /data/$d/$m/dump.bson &
   done
 done
 }
@@ -432,7 +451,7 @@ exportjson() {
 #
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-     mongoexport -d hub -c transactions_jda --port 270$d$m -o /data/$d/$m/export.json &
+     mongoexport -d hub -c transactions_jda --port $MONGO_PORT_PREFIX$d$m -o /data/$d/$m/export.json &
   done
 done
 }
@@ -484,7 +503,7 @@ scp jdal1:jda/weeklyrollup.js ~/jda/
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
     rm -f /data/$d/$m/time.txt
-    { time cat ~/jda/weeklyrollup.js | mongo --port 270$d$m; } 2> /data/$d/$m/time.txt &
+    { time cat ~/jda/weeklyrollup.js | mongo --port $MONGO_PORT_PREFIX$d$m; } 2> /data/$d/$m/time.txt &
     sleep 1
   done
 done
@@ -559,7 +578,7 @@ case $USERCMD in
 	;;
 
 	onstart)
-		initdiskraid0
+		#initdiskraid0
 		disksetup
 		mongosetup
 		mongoconfigs
@@ -568,7 +587,7 @@ case $USERCMD in
 	install)
 		installmongo
 		installos
-		fstabsetup
+		#amazon_fstabsetup
 	;;
 
 	addshards) mongoaddshards
