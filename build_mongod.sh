@@ -333,6 +333,7 @@ mkdir -p $MONGOPATH
 \cp -f /data/mongos.conf $MONGOPATH
 sed -i 's/DISK/'9'/' $MONGOPATH/mongos.conf
 sed -i 's/MONGO/'0'/' $MONGOPATH/mongos.conf
+sed -i 's/^replSet/#replSet/' $MONGOPATH/mongos.conf
 
 MONGOPATH=/data/9/9
 mkdir -p $MONGOPATH/db
