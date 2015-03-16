@@ -361,7 +361,7 @@ mongoaddshards() {
 HOST=`hostname`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-	echo "rs.initiate()" | mongo --hostname localhost --port $MONGO_PORT_PREFIX$d$m
+	echo "rs.initiate({_id:\"rs$d$m\", members:[{_id:0,host:\"10.70.70.1$d:370$d$m\"}]})" | mongo --host $HOST --port $MONGO_PORT_PREFIX$d$m
     echo "sh.addShard(\"$HOST:$MONGO_PORT_PREFIX$d$m\")" | mongo --host $MONGOSHOST --port $MONGOSPORT
   done
 done
