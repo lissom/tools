@@ -306,7 +306,6 @@ replSet=rsDISKMONGO
 #noscripting=true
 # Turns off table scans.  Any query that would do a table scan fails.
 #notablescan=true
-#replSet=setname
 #sslMode=requireSSL
 #sslPEMKeyFile=/data/mongodb.pem
 EOF
@@ -333,13 +332,13 @@ mkdir -p $MONGOPATH
 \cp -f /data/mongos.conf $MONGOPATH
 sed -i 's/DISK/'9'/' $MONGOPATH/mongos.conf
 sed -i 's/MONGO/'0'/' $MONGOPATH/mongos.conf
-sed -i 's/^replSet/#replSet/' $MONGOPATH/mongos.conf
 
 MONGOPATH=/data/9/9
 mkdir -p $MONGOPATH/db
 \cp -f /data/mongod.conf $MONGOPATH
 sed -i 's/DISK/'9'/' $MONGOPATH/mongod.conf
 sed -i 's/MONGO/'9'/' $MONGOPATH/mongod.conf
+sed -i 's/^replSet/#replSet/' $MONGOPATH/mongod.conf
 
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
