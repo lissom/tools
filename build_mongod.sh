@@ -20,7 +20,7 @@ AGENTHOST=172.31.15.217
 #should match RA, which I usually set to 16
 MDADM_CHUNK=16
 #used for modulo so 1 indexed
-NUMANODECOUNT=2
+NUMANODECOUNT=4
 if [ ! -z $2 ]; then MONGOEND=$2; fi
 if [ ! -z $3 ]; then DISKEND=$3; fi
 if [ ! -z $4 ]; then NUMANODECOUNT=$4; fi
@@ -396,6 +396,7 @@ count=0
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
     node=$((count%NUMANODECOUNT))
+    echo
     [ -f $d/mongod.conf ] && numactl --cpunodebind=$node -localalloc mongod -f $d/mongod.conf
     count=$((count+1))
   done
