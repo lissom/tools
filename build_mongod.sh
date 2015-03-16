@@ -10,6 +10,9 @@ DISKSTART=0
 DISKEND=3
 MONGOSTART=0
 MONGOEND=0
+WT_CACHESIZE=100GB
+#There is a bit of magic here, have to know that DISK,MONGO are subbed in with sed
+WT_INDEX_DIR=/data/DISK/MONGO/indexes
 MONGO_PORT_PREFIX=370
 MONGOSHOST=172.31.15.217
 MONGOSPORT=27017
@@ -273,6 +276,8 @@ EOF
 
 cat << EOF > /data/mongod.conf
 storageEngine=wiredTiger
+wiredTigerCacheSizeGB=$WT_CACHESIZE
+wiredTigerDirectoryForIndexes=$WT_INDEX_DIR
 logpath=/data/DISK/MONGO/mongod.log
 logappend=true
 fork=true
@@ -393,6 +398,10 @@ for d in $(seq $DISKSTART $DISKEND); do
     count=$((count+1))
   done
 done
+#start any config servers, should error out on already started servers
+for d in /data/*/*; do
+  [ -f $d/mongod.conf ] && numactl --interleave=all  mongod -f $d/mongod.conf
+done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
 sleep 1
@@ -420,8 +429,6 @@ EOF
 }
 
 
-
-
 clean() {
 #
 # REMOVE ALL DATA
@@ -440,7 +447,7 @@ dump() {
 #
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-     mongodump -d hub -c transactions_jda --port $MONGO_PORT_PREFIX$d$m -o - > /data/$d/$m/dump.bson &
+    mongodump -d $DATABASE -c $COLLECTION --port $MONGO_PORT_PREFIX$d$m -o - > /data/$d/$m/dump.bson &
   done
 done
 }
@@ -451,11 +458,10 @@ exportjson() {
 #
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-     mongoexport -d hub -c transactions_jda --port $MONGO_PORT_PREFIX$d$m -o /data/$d/$m/export.json &
+     mongoexport -d $DATABASE -c $COLLECTION --port $MONGO_PORT_PREFIX$d$m -o /data/$d/$m/export.json &
   done
 done
 }
-
 
 tarjson() {
 #
@@ -476,7 +482,7 @@ toloader() {
 MACHINE=`cat ~/id`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    scp /data/$d/$m/dump/hub/transactions_jda.bson l1:/data/dump/dump$MACHINE$d$m.bson &
+    scp /data/$d/$m/dump/$DATABASE/$COLLECTION.bson l1:/data/dump/dump$MACHINE$d$m.bson &
     sleep 1
   done
 done
@@ -489,7 +495,7 @@ toloaderjson() {
 MACHINE=`cat ~/id`
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
-    scp /data/$d/$m/export.json l1:/data/jda/jda$MACHINE$d$m.json &
+    scp /data/$d/$m/export.json l1:/data/json/machine$MACHINE$d$m.json &
     sleep 1
   done
 done
@@ -499,11 +505,11 @@ runrollup() {
 #
 # Run script on endpoint individually
 #
-scp jdal1:jda/weeklyrollup.js ~/jda/
+scp l1:payload/weeklyrollup.js ~/payload/
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
     rm -f /data/$d/$m/time.txt
-    { time cat ~/jda/weeklyrollup.js | mongo --port $MONGO_PORT_PREFIX$d$m; } 2> /data/$d/$m/time.txt &
+    { time cat ~/payload/weeklyrollup.js | mongo --port $MONGO_PORT_PREFIX$d$m; } 2> /data/$d/$m/time.txt &
     sleep 1
   done
 done
@@ -516,7 +522,7 @@ agg1() {
 for host in "${HOSTS[@]}"; do
   for d in $(seq $DISKSTART $DISKEND); do
     for m in $(seq $MONGOSTART $MONGOEND); do
-      ~/test1 -a ~/jda/aggpreagg.js -u $host:27017 -r hub.transactions -w intagg.rollup &
+    ~/test1 -a ~/payload/aggpreagg.js -u $host:27017 -r hub.transactions -w intagg.rollup &
     done
   done
 done
@@ -528,7 +534,7 @@ aggnext() {
 # Assumes mongoS on the runner
 #
 for job in "${WEEKLYJOBS[@]}"; do
-  ~/test1 -a ~/jda/$job -u localhost:27017 -r intagg.rollup -w skip &
+~/test1 -a ~/payload/$job -u localhost:27017 -r intagg.rollup -w skip &
 done
 }
 
@@ -595,7 +601,10 @@ case $USERCMD in
 
 	doclean) clean
 	;;
+	
+	"")echo No user command given
+	;;
 
-	*)echo $USERCMD is not recognized
+	*)echo \"$USERCMD\" is not a recognized command
 	;;
 esac
