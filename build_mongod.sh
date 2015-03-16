@@ -26,10 +26,12 @@ if [ ! -z $3 ]; then DISKEND=$3; fi
 if [ ! -z $4 ]; then NUMANODECOUNT=$4; fi
 PROGRAMS="nano screen xfsprogs mdadm numactl"
 
-grep -q "debian" /etc/os-release
-if [ $? -eq 0 ]; then OSVERSION="debian"; fi
-grep -q "rhel" /etc/os-release
-if [ $? -eq 0 ]; then OSVERSION="rhel"; fi
+if [ -e /etc/os-release ]; then
+	grep -q "debian" /etc/os-release
+	if [ $? -eq 0 ]; then OSVERSION="debian"; fi
+	grep -q "rhel" /etc/os-release
+	if [ $? -eq 0 ]; then OSVERSION="rhel"; fi
+fi
 if [ -e /etc/centos-release ]; then 
   OSVERSION="rhel"; 
   grep -q " 6\." /etc/centos-release
