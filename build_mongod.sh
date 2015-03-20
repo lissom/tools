@@ -24,7 +24,7 @@ NUMANODECOUNT=4
 if [ ! -z $2 ]; then MONGOEND=$2; fi
 if [ ! -z $3 ]; then DISKEND=$3; fi
 if [ ! -z $4 ]; then NUMANODECOUNT=$4; fi
-PROGRAMS="nano screen xfsprogs mdadm numactl"
+PROGRAMS="nano screen xfsprogs mdadm numactl htop"
 
 if [ -e /etc/os-release ]; then
 	grep -q "debian" /etc/os-release
@@ -49,6 +49,8 @@ set -u
 
 installrhel() {
 sudo yum -y update
+wget http://packages.sw.be/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.x86_64.rpm
+rpm -ihv rpmforge-release*.rf.x86_64.rpm
 sudo yum install -y ${PROGRAMS}
 }
 
@@ -84,7 +86,7 @@ echo No OS detected
 return 1;
 }
 
-munininstallcentos() {
+muninr() {
 if [ "$OSVERSION" = "rhel" && OS_RELEASE_MAJOR -eq 6 ]; then
   rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 fi
@@ -156,9 +158,18 @@ service mongod stop
 update-rc.d mongod disable
 }
 
-mongoinstallubuntu26() {
+mongoinstallubuntu30() {
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
 echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+service mongod stop
+update-rc.d mongod disable
+}
+
+mongoinstallubuntu26() {
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
 sudo apt-get update
 sudo apt-get install -y mongodb-org
 service mongod stop
