@@ -13,6 +13,8 @@ MONGOEND=0
 WT_CACHESIZE=100
 DATABASE=test
 COLLECTION=test
+MONGOD_EXECUTABLE=mongod
+MONGOS_EXECUTABLE=mongos
 MONGO_PORT_PREFIX=370
 MONGOSHOST=10.70.70.10
 MONGOSPORT=27017
@@ -381,27 +383,27 @@ done
 
 mongobarestart() {
 for d in /data/*/*; do
-  [ -f $d/mongod.conf ] && mongod -f $d/mongod.conf
+  [ -f $d/mongod.conf ] && ${MONGOD_EXECUTABLE} -f $d/mongod.conf
 done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
 sleep 1
 # must be seperate so config servers come up first
 for d in /data/*/*; do
-  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
+  [ -f $d/mongos.conf ] && ${MONGOS_EXECUTABLE} -f $d/mongos.conf
 done
 }
 
 mongostart() {
 for d in /data/*/*; do
-  [ -f $d/mongod.conf ] && numactl --interleave=all mongod -f $d/mongod.conf
+  [ -f $d/mongod.conf ] && numactl --interleave=all ${MONGOD_EXECUTABLE} -f $d/mongod.conf
 done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
 sleep 1
  must be seperate so config servers come up first
 for d in /data/*/*; do
-  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
+  [ -f $d/mongos.conf ] && ${MONGOS_EXECUTABLE} -f $d/mongos.conf
 done
 }
 
@@ -410,20 +412,20 @@ count=0
 for d in $(seq $DISKSTART $DISKEND); do
   for m in $(seq $MONGOSTART $MONGOEND); do
     node=$((count%NUMANODECOUNT))
-    [ -f /data/$d/$m/mongod.conf ] && numactl --cpunodebind=$node --localalloc mongod -f /data/$d/$m/mongod.conf
+    [ -f /data/$d/$m/mongod.conf ] && numactl --cpunodebind=$node --localalloc ${MONGOD_EXECUTABLE} -f /data/$d/$m/mongod.conf
     count=$((count+1))
   done
 done
 #start any config servers, should error out on already started servers
 for d in /data/*/*; do
-  [ -f $d/mongod.conf ] && numactl --interleave=all mongod -f $d/mongod.conf
+  [ -f $d/mongod.conf ] && numactl --interleave=all ${MONGOD_EXECUTABLE} -f $d/mongod.conf
 done
 #just in case pkill mongo was used
 [ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
 sleep 1
 # must be seperate so config servers come up first
 for d in /data/*/*; do
-  [ -f $d/mongos.conf ] && mongos -f $d/mongos.conf
+  [ -f $d/mongos.conf ] && ${MONGOS_EXECUTABLE} -f $d/mongos.conf
 done
 }
 
