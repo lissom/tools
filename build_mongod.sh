@@ -130,7 +130,7 @@ sudo \rm /etc/yum.repos.d/mongodb.repo
 yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
 echo "[mongodb-enterprise-2.6]
 name=MongoDB Enterprise 2.6 Repository
-baseurl=https://repo.mongodb.com/yum/redhat/6Server/mongodb-enterprise/2.6/x86_64/
+baseurl=https://repo.mongodb.com/yum/redhat/6/mongodb-enterprise/2.6/x86_64/
 gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 sudo yum install -y mongodb-enterprise
