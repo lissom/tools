@@ -23,6 +23,12 @@ AGENTHOST=10.70.70.10
 MDADM_CHUNK=16
 #used for modulo so 1 indexed
 NUMANODECOUNT=4
+#CGPREFIX settings:
+#RHEL=
+#UBUNTU=/sys/fs
+CGPREFIX=
+CGEXEC=cgexec
+CGROUP_MONGOD_RAM=4G
 if [ ! -z $2 ]; then MONGOEND=$2; fi
 if [ ! -z $3 ]; then DISKEND=$3; fi
 if [ ! -z $4 ]; then NUMANODECOUNT=$4; fi
@@ -130,7 +136,7 @@ sudo \rm /etc/yum.repos.d/mongodb.repo
 yum list installed | grep mongo | awk '{ print $1 }' | xargs yum remove -y {};
 echo "[mongodb-enterprise-2.6]
 name=MongoDB Enterprise 2.6 Repository
-baseurl=https://repo.mongodb.com/yum/redhat/6/mongodb-enterprise/2.6/x86_64/
+baseurl=https://repo.mongodb.com/yum/redhat/6Server/mongodb-enterprise/2.6/x86_64/
 gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 sudo yum install -y mongodb-enterprise
@@ -407,6 +413,33 @@ for d in /data/*/*; do
 done
 }
 
+
+mongocgroupstart() {
+count=0
+for d in $(seq $DISKSTART $DISKEND); do
+  for m in $(seq $MONGOSTART $MONGOEND); do
+    node=$((count%NUMANODECOUNT))
+    if [ -f /data/$d/$m/mongod.conf ]; then
+	cgcreate -a mongod:mongod -t mongod:mongod -g memory:mongo$d$m
+	echo ${CGROUP_MONGOD_RAM} > ${CGPREFIX}/cgroup/memory/mongo$d$m/memory.limit_in_bytes
+	cgexec -g memory:mongo$d$m numactl --cpunodebind=$node --localalloc ${MONGOD_EXECUTABLE} -f /data/$d/$m/mongod.conf
+    fi
+    count=$((count+1))
+  done
+done
+#start any config servers, should error out on already started servers
+for d in /data/9/*; do
+  [ -f $d/mongod.conf ] && numactl --interleave=all ${MONGOD_EXECUTABLE} -f $d/mongod.conf
+done
+#just in case pkill mongo was used
+[ -f /etc/init.d/mongodb-mms-monitoring-agent ] && /etc/init.d/mongodb-mms-monitoring-agent start
+sleep 1
+# must be seperate so config servers come up first
+for d in /data/*/*; do
+  [ -f $d/mongos.conf ] && ${MONGOS_EXECUTABLE} -f $d/mongos.conf
+done
+}
+
 mongostartnuma() {
 count=0
 for d in $(seq $DISKSTART $DISKEND); do
@@ -417,7 +450,7 @@ for d in $(seq $DISKSTART $DISKEND); do
   done
 done
 #start any config servers, should error out on already started servers
-for d in /data/*/*; do
+for d in /data/9/*; do
   [ -f $d/mongod.conf ] && numactl --interleave=all ${MONGOD_EXECUTABLE} -f $d/mongod.conf
 done
 #just in case pkill mongo was used
