@@ -44,6 +44,8 @@ if [ -e /etc/centos-release ]; then
   OSVERSION="rhel"; 
   grep -q " 6\." /etc/centos-release
   if [ $? -eq 0 ]; then OS_RELEASE_MAJOR=6; fi
+  grep -q " 7\." /etc/centos-release
+  if [ $? -eq 0 ]; then OS_RELEASE_MAJOR=7; fi
 fi
 
 set -u
@@ -94,7 +96,7 @@ echo No OS detected
 return 1;
 }
 
-muninr() {
+munininstallrhel() {
 if [ "$OSVERSION" = "rhel" && OS_RELEASE_MAJOR -eq 6 ]; then
   rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 fi
@@ -128,7 +130,7 @@ gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 sudo yum install -y mongodb-org
 sudo chkconfig mongod off
-munininstallcentos
+munininstallrhel
 }
 
 mongoinstallrhel26() {
@@ -141,7 +143,7 @@ gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 sudo yum install -y mongodb-enterprise
 sudo chkconfig mongod off
-munininstallcentos
+munininstallrhel
 }
 
 mongoinstallrhel24() {
@@ -154,7 +156,7 @@ gpgcheck=0
 enabled=1" | sudo tee -a /etc/yum.repos.d/mongodb.repo
 yum install -y mongo-10gen mongo-10gen --exclude mongodb-org,mongodb-org-server
 sudo chkconfig mongod off
-munininstallcentos
+munininstallrhel
 }
 
 mongoinstalldebian26() {
