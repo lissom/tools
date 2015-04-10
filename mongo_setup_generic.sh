@@ -31,11 +31,33 @@ fi
 if test -f /sys/kernel/mm/redhat_transparent_hugepage/defrag; then
    echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
 fi
-#Required for RHEL 7
-chmod +x /etc/rc.d/rc.local
 
 exit 0
 EOF
+
+#Required for RHEL 7's systemd
+if test -f /etc/rc.d/rc.local; then
+chmod +x /etc/rc.d/rc.local
+sed -i '/exit 0/d' /etc/rc.d/rc.local
+cat << EOF >> /etc/rc.d/rc.local
+#Standard Linux THP Settings
+if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+   echo never > /sys/kernel/mm/transparent_hugepage/enabled
+fi
+if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+   echo never > /sys/kernel/mm/transparent_hugepage/defrag
+fi
+#RHEL + RHEL Clone systems
+if test -f /sys/kernel/mm/redhat_transparent_hugepage/enabled; then
+   echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+fi
+if test -f /sys/kernel/mm/redhat_transparent_hugepage/defrag; then
+   echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+fi
+
+exit 0
+EOF
+fi
 
 #disable SE linux
 if [ -f /etc/selinux/config ]; then
