@@ -14,6 +14,7 @@ if [ -z $2 ]; then sched=noop; else sched=$2; fi
 if [ -z $3 ]; then rotate=0; else rotate=$3; fi
 if [ -z $4 ]; then nr_requests=256; else nr_requests=$4; fi
 
+#TODO: change this into a systemd service, looks like rc.local support may be dropped from RHEL in the future (RHEL 8?)
 sed -i '/exit 0/d' /etc/rc.local
 cat << EOF >> /etc/rc.local
 #Standard Linux THP Settings
@@ -30,6 +31,8 @@ fi
 if test -f /sys/kernel/mm/redhat_transparent_hugepage/defrag; then
    echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
 fi
+#Required for RHEL 7
+chmod +x /etc/rc.d/rc.local
 
 exit 0
 EOF
