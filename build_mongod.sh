@@ -97,7 +97,7 @@ return 1;
 }
 
 munininstallrhel() {
-if [ "$OSVERSION" = "rhel" && OS_RELEASE_MAJOR -eq 6 ]; then
+if [ "$OSVERSION" = "rhel" ] && [ $OS_RELEASE_MAJOR -eq 6 ]; then
   rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 fi
 #install munin-node
