@@ -619,6 +619,9 @@ case $USERCMD in
 
 	startnuma) mongostartnuma
 	;;
+	
+	startcgroup mongocgroupstart
+	;;
 
 	stop) pkill mongod; pkill mongos
 	;;
