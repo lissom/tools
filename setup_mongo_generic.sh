@@ -1,6 +1,4 @@
 #!/bin/bash
-echo WARNING: This script by default is setting up all the disks for SSD use \(These settings will not work well on direct attached spinning disks\)
-echo If only mongoD is being run on the machine then how the non-mongoD disks are setup is not relevant
 # $1 read_ahead_kb
 # $2 scheduler
 # $3 rotational (spinning drive = 1; other = 0)
@@ -9,37 +7,22 @@ echo If only mongoD is being run on the machine then how the non-mongoD disks ar
 #If we are root, do all the following, no idents as this is everything
 if [ `id -u` -eq 0 ]; then 
 
+echo WARNING: This script by default is setting up all the disks for SSD use \(These settings will not work well on direct attached spinning disks\)
+echo If only mongoD is being run on the machine then how the non-mongoD disks are setup is not relevant
+
 if [ -z $1 ]; then rakb=16; else rabk=$1; fi
 if [ -z $2 ]; then sched=noop; else sched=$2; fi
 if [ -z $3 ]; then rotate=0; else rotate=$3; fi
 if [ -z $4 ]; then nr_requests=256; else nr_requests=$4; fi
 
-#TODO: change this into a systemd service, looks like rc.local support may be dropped from RHEL in the future (RHEL 8?)
-sed -i '/exit 0/d' /etc/rc.local
-cat << EOF >> /etc/rc.local
-#Standard Linux THP Settings
-if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
-   echo never > /sys/kernel/mm/transparent_hugepage/enabled
-fi
-if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
-   echo never > /sys/kernel/mm/transparent_hugepage/defrag
-fi
-#RHEL + RHEL Clone systems
-if test -f /sys/kernel/mm/redhat_transparent_hugepage/enabled; then
-   echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
-fi
-if test -f /sys/kernel/mm/redhat_transparent_hugepage/defrag; then
-   echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
-fi
-
-exit 0
-EOF
-
+RC_LOCAL=/etc/rc.local
 #Required for RHEL 7's systemd
 if test -f /etc/rc.d/rc.local; then
-chmod +x /etc/rc.d/rc.local
-sed -i '/exit 0/d' /etc/rc.d/rc.local
-cat << EOF >> /etc/rc.d/rc.local
+RC_LOCAL=/etc/rc.d/rc.local
+chmod +x ${RC_LOCAL}
+fi
+sed -i '/exit 0/d' ${RC_LOCAL}
+cat << EOF >> ${RC_LOCAL}
 #Standard Linux THP Settings
 if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
    echo never > /sys/kernel/mm/transparent_hugepage/enabled
@@ -47,7 +30,7 @@ fi
 if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
    echo never > /sys/kernel/mm/transparent_hugepage/defrag
 fi
-#RHEL + RHEL Clone systems
+#RHEL 6 + RHEL 6 Clone systems
 if test -f /sys/kernel/mm/redhat_transparent_hugepage/enabled; then
    echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
 fi
@@ -57,7 +40,6 @@ fi
 
 exit 0
 EOF
-fi
 
 #disable SE linux
 if [ -f /etc/selinux/config ]; then
