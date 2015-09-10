@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="35363" name="vividChalk2" modified="2015-03-31 15:58:57" author="Charlie Page" website="www.github.com/lissom">
+    <occurrenceIndication color="#616161" />
+    <findScope color="#191919" />
+    <deletionIndication color="#FF0000" />
+    <singleLineComment color="#8146A2" />
+    <multiLineComment color="#8C3FC8" />
+    <commentTaskTag color="#800080" />
+    <javadoc color="#8C3FC8" />
+    <javadocLink color="#814582" />
+    <javadocTag color="#800080" />
+    <javadocKeyword color="#800080" />
+    <class color="#FFFFFF" bold="false" italic="true" />
+    <interface color="#FFFFFF" />
+    <method color="#F7C527" />
+    <methodDeclaration color="#F1C438" />
+    <bracket color="#FFFFFF" />
+    <number color="#66FF00" />
+    <string color="#66FF00" />
+    <operator color="#FFFFFF" />
+    <keyword color="#FF6600" bold="true" underline="false" strikethrough="false" />
+    <annotation color="#FFFFFF" italic="true" />
+    <staticMethod color="#CCFF33" italic="true" />
+    <localVariable color="#3C758D" />
+    <localVariableDeclaration color="#357A92" />
+    <field color="#357A8F" />
+    <staticField color="#4080FF" bold="false" italic="true" underline="false" strikethrough="false" />
+    <staticFinalField color="#80FF00" />
+    <deprecatedMember color="#FF0000" />
+    <enum color="#66FF00" />
+    <inheritedMethod color="#E3B735" />
+    <abstractMethod color="#F1C436" />
+    <parameterVariable color="#4080FF" />
+    <typeArgument color="#D9B0AC" />
+    <typeParameter color="#CDB1AD" />
+    <constant color="#FFFF00" />
+    <background color="#000000" />
+    <currentLine color="#222220" />
+    <foreground color="#FFFFFF" />
+    <lineNumber color="#666666" />
+    <selectionBackground color="#414C3B" />
+    <selectionForeground color="#FFFFFF" />
+</colorTheme>
