@@ -1,5 +1,7 @@
 #!/bin/bash
 #Ubuntu
+sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install linux-firmware-nonfree compizconfig-settings-manager unity-tweak-tool
 
 #Video cards
