@@ -11,7 +11,7 @@ sudo apt-get install linux-firmware-nonfree compizconfig-settings-manager unity-
 #sudo update-rc.d -f apparmor remove
 
 #System utils
-sudo apt-get install htop zip unzip 
+sudo apt-get install htop zip unzip sysstat
 
 #Java
 sudo add-apt-repository ppa:webupd8team/java
