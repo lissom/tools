@@ -4,9 +4,8 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install linux-firmware-nonfree compizconfig-settings-manager unity-tweak-tool
 
-#Video cards
+#Video cards - Nvidea
 #sudo apt-get install nvidia-current
-#sudo apt-get install fglrx fglrx-updates 
 
 #App armor
 #sudo invoke-rc.d apparmor kill
