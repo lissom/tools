@@ -1,0 +1,10 @@
+mkdir ~/git
+git config --global core.excludesfile '~/.gitignore'
+cat << EOF > ~/.gitignore
+*.pyc
+/.settings
+/.project
+/.pydevproject
+core.*
+*~
+EOF
