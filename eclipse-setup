@@ -1,6 +1,3 @@
-ShellEd:
-http://sourceforge.net/projects/shelled/files/shelled/update/
-
 -XX:+UseParallelGC
 -XX:+AggressiveOpts
 -Xms1024m
