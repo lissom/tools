@@ -2,3 +2,10 @@
 -XX:+AggressiveOpts
 -Xms1024m
 -Xmx4096m
+
+color theme
+http://eclipse-color-theme.github.com/update
+pydev
+http://pydev.org/updates
+vrapper
+http://vrapper.sourceforge.net/update-site/stable
