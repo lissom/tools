@@ -9,3 +9,6 @@ pydev
 http://pydev.org/updates
 vrapper
 http://vrapper.sourceforge.net/update-site/stable
+
+#vivid chalk 2
+wget https://raw.githubusercontent.com/lissom/tools/master/eclipse-color-themes.xml
