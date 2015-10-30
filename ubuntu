@@ -2,7 +2,13 @@
 #Ubuntu
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get -y install linux-firmware-nonfree compizconfig-settings-manager unity-tweak-tool
+sudo apt-get -y install linux-firmware-nonfree compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
+#14.04
+wget -q -O – https://fixubuntu.com/fixubuntu.sh | bash
+gsettings set com.canonical.Unity.Lenses remote-content-search ‘none’
+sudo apt-get -y remove unity-lens-shopping
+gsettings set com.canonical.Unity.Lenses disabled-scopes "['more_suggestions-amazon.scope', 'more_suggestions-u1ms.scope', 'more_suggestions-populartracks.scope', 'music-musicstore.scope', 'more_suggestions-ebay.scope', 'more_suggestions-ubuntushop.scope', 'more_suggestions-skimlinks.scope']"
+#sudo apt-get install flashplugin-installer
 
 #Video cards - Nvidea
 sudo apt-get -y install nvidia-current
