@@ -7,6 +7,7 @@ color theme
 http://eclipse-color-theme.github.com/update
 pydev
 http://pydev.org/updates
+# pep8 --ignore E501,E731
 vrapper
 http://vrapper.sourceforge.net/update-site/stable
 
