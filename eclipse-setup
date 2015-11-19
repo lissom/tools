@@ -9,10 +9,12 @@ pydev
 http://pydev.org/updates
 # pep8 --ignore E501,E731
 
-## From marketplace
+## start from marketplace
 vrapper
 http://vrapper.sourceforge.net/update-site/stable
+
 json tools (by Sweet Lemonade)
+## End from marketplace
 
 #vivid chalk 2
 wget https://raw.githubusercontent.com/lissom/tools/master/eclipse-color-themes.xml
