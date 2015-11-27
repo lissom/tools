@@ -8,6 +8,7 @@ http://eclipse-color-theme.github.com/update
 pydev
 http://pydev.org/updates
 code formatter pep8 --ignore E501,E701
+# must click on code formatter for the box to appear
 analysis pep8 --ignore E501,E701,E301,E302
 E501 - line length
 E701 - multiple statement of same line if true: do_thing()
