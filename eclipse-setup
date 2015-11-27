@@ -7,7 +7,12 @@ color theme
 http://eclipse-color-theme.github.com/update
 pydev
 http://pydev.org/updates
-# pep8 --ignore E501,E731
+code formatter pep8 --ignore E501,E701
+analysis pep8 --ignore E501,E701,E301,E302
+E501 - line length
+E701 - multiple statement of same line if true: do_thing()
+E302 - Two lines before global level functions
+E301 - One blank before class level functions
 
 ## start from marketplace
 vrapper
