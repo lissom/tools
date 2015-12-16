@@ -18,7 +18,7 @@ cd ..
 ./prepare_dependencies.py
 mkdir build && cd build
 # still need lines to install additional dependancies
-../external_dependencies/install/bin/cmake -Dgoogleapis_build_mongoose:BOOL=ON -Dgoogleapis_build_samples:BOOL=ON -Dgoogleapis_build_service_apis:BOOL=ON ..
+../external_dependencies/install/bin/cmake -Dgoogleapis_build_mongoose:BOOL=ON -Dgoogleapis_build_samples:BOOL=ON -Dgoogleapis_build_service_apis:BOOL=ON -Dgoogleapis_build_tests:BOOL=ON -Dgflags_DIR:PATH=~/gflags/build -Dcurl_DIR:PATH=../external_dependencies/curl-7.42.1 ..
 # this can fail the second time around
 make all
 make test
