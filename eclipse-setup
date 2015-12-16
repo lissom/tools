@@ -7,15 +7,16 @@ color theme
 http://eclipse-color-theme.github.com/update
 pydev
 http://pydev.org/updates
-code formatter pep8 --ignore E501,E701
+code formatter pep8 --ignore E501,E701,E241
 # must click on code formatter for the box to appear
-analysis pep8 --ignore E501,E701,E301,E302,E221,E261
+analysis pep8 --ignore E501,E701,E301,E302,E221,E261,E241
 E501 - line length
 E701 - multiple statement of same line if true: do_thing()
 E302 - Two lines before global level functions
 E301 - One blank before class level functions
 E221 - Multiple spaces before operator
 E261 - At least two spaces before an inline comment
+E241 - Multiple spaces after :  (for making nice looking blocks, pep8 really needs @ignore start @ignore end)
 
 ## start from marketplace
 vrapper
