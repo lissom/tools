@@ -10,7 +10,7 @@ core.*
 EOF
 
 mkdir ~/bin
-echo << EOF > ~/bin/bash_completion.sh
+cat << EOF > ~/bin/bash_completion.sh
 # Author.: Ole J
 # Date...: 23.03.2008
 # License: Whatever
