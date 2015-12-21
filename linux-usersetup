@@ -7,4 +7,5 @@ cat < EOF > ~/git/.gitignore
 /.pydevproject
 core.*
 *~
+charlie_test*
 EOF
