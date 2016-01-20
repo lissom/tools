@@ -1,0 +1,7 @@
+about.config
+network.http.pipelining = True
+network.http.pipelining.max-optimistic-requests = 8
+network.http.pipelining.maxrequests = 64
+network.http.max-persistent-connections-per-proxy = 64
+network.http.max-persistent-connections-per-server = 8
+network.dns.disableIPv6 = True
