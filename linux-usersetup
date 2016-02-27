@@ -1,4 +1,5 @@
 mkdir ~/git
+git config --global pull.rebase true
 git config --global core.excludesfile '~/git/.gitignore'
 cat < EOF > ~/git/.gitignore
 *.pyc
