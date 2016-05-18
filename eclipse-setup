@@ -26,5 +26,9 @@ http://vrapper.sourceforge.net/update-site/stable
 json tools (by Sweet Lemonade)
 ## End from marketplace
 
+C++11 support (Mars):
+Window/Preferences/[C/C++]/Settings->Discovery:
+Add -std=c++0x (c++1y) to CDT ... Built-in Compiler Settings
+
 #vivid chalk 2
 wget https://raw.githubusercontent.com/lissom/tools/master/eclipse-color-themes.xml
