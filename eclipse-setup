@@ -9,8 +9,9 @@ pydev
 http://pydev.org/updates
 code formatter pep8 --ignore E501,E701,E241
 # must resize window for the box to appear
-analysis pep8 --ignore E501,E701,E301,E302,E221,E261,E241,E731
-E501 - line length
+analysis pep8 --ignore E265,E501,E701,E301,E302,E221,E261,E241,E731
+E265 - Line should start with '# '.  autopep8.py won't fix spacing in comments that look like code
+E501 - line length (This isn't the punch card era.... right...?)
 E701 - multiple statement of same line if true: do_thing()
 E302 - Two lines before global level functions
 E301 - One blank before class level functions
