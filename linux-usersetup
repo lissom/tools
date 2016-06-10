@@ -10,3 +10,7 @@ core.*
 *~
 charlie_test*
 EOF
+
+
+sudo xmodmap -e "keycode 20 = underscore minus underscore minus"
+#sudo xmodmap -e "keycode 20 = minus underscore minus underscore"
