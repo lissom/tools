@@ -1,8 +1,10 @@
 #!/bin/bash
+set -ux -o pipefail 
 #Ubuntu
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get -y install linux-firmware-nonfree compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
+
 #14.04
 wget -q -O – https://fixubuntu.com/fixubuntu.sh | bash
 gsettings set com.canonical.Unity.Lenses remote-content-search ‘none’
@@ -21,25 +23,21 @@ sudo update-rc.d -f apparmor remove
 sudo apt-get -y install htop zip unzip sysstat screen xfsprogs mdadm numactl
 
 #Virtualbox
-wget -q -O - http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
-sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian xenial non-free contrib" >> /etc/apt/sources.list.d/virtualbox.org.list'
-
+sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian '$(lsb_release -cs)' contrib non-free' > /etc/apt/sources.list.d/virtualbox.list"
+wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
 #No Machine Enterprise client
 #https://www.nomachine.com/download/download&id=19 - not automated
 
 #Java
 sudo add-apt-repository -y ppa:webupd8team/java
-sudo apt-get update
-sudo apt-get -y install oracle-java8-installer
 
-#### Apps ####
-# meld
-sudo apt-get -y install meld git
-# Chrome
+#Chrome
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
 sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+
+#### Apps ####
 sudo apt-get update 
-sudo apt-get install google-chrome-stable
+sudo apt-get install -y google-chrome-stable virtualbox-5.1 install oracle-java8-installer meld git
 
 sudo apt-get -y -f install && sudo apt-get -y autoremove && sudo apt-get -y autoclean && sudo apt-get -y clean
 
