@@ -14,11 +14,18 @@ gsettings set com.canonical.Unity.Lenses disabled-scopes "['more_suggestions-ama
 sudo apt-get -y install nvidia-current
 
 #App armor
-#sudo invoke-rc.d apparmor kill
-#sudo update-rc.d -f apparmor remove
+sudo invoke-rc.d apparmor stop
+sudo update-rc.d -f apparmor remove
 
 #System utils
 sudo apt-get -y install htop zip unzip sysstat screen xfsprogs mdadm numactl
+
+#Virtualbox
+wget -q -O - http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | sudo apt-key add -
+sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian xenial non-free contrib" >> /etc/apt/sources.list.d/virtualbox.org.list'
+
+#No Machine Enterprise client
+#https://www.nomachine.com/download/download&id=19 - not automated
 
 #Java
 sudo add-apt-repository -y ppa:webupd8team/java
