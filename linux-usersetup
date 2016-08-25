@@ -1,6 +1,9 @@
 mkdir ~/git
 git config --global pull.rebase true
 git config --global core.excludesfile '~/git/.gitignore'
+git config --global alias.undo '!f() { \
+    git reset --hard $(git rev-parse --abbrev-ref HEAD)@{${1-1}}; \
+}; f'
 cat < EOF > ~/git/.gitignore
 *.pyc
 /.settings
