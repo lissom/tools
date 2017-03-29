@@ -26,7 +26,7 @@ Startup
 Pydev
 code formatter pep8 --ignore E501,E701,E241
 # must resize window for the box to appear
-analysis pep8 --ignore E265,E501,E701,E301,E302,E221,E261,E241,E731
+analysis pep8 --ignore E265,E501,E701,E301,E302,E221,E261,E241,E731,E722
 E265 - Line should start with '# '.  autopep8.py won't fix spacing in comments that look like code
 E501 - line length (This isn't the punch card era.... right...?)
 E701 - multiple statement of same line if true: do_thing()
@@ -36,6 +36,7 @@ E221 - Multiple spaces before operator
 E261 - At least two spaces before an inline comment
 E241 - Multiple spaces after :  (for making nice looking blocks, pep8 really needs @ignore start @ignore end)
 E731 - Do not assign a lamba expression, use a def (unfortunate, but ppl do this, not worth worrying afaik)
+E722 - Bare "except:"
 
 Color theme
 #vivid chalk 2
