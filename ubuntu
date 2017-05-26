@@ -41,6 +41,10 @@ sudo apt-get install -y google-chrome-stable virtualbox-5.1 install oracle-java8
 
 sudo apt-get -y -f install && sudo apt-get -y autoremove && sudo apt-get -y autoclean && sudo apt-get -y clean
 
+wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-3.9 main"
+sudo apt-get update
+
 exit
 
 All notes past this point
