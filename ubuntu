@@ -1,9 +1,13 @@
 #!/bin/bash
 set -ux -o pipefail 
+
+bm=0
 #Ubuntu
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get -y install linux-firmware-nonfree compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
+
+sudo apt-get -y install compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
+[ ${bm:-0} -eq 1 ] && sudo apt-get install  linux-firmware-nonfree
 
 #14.04
 wget -q -O – https://fixubuntu.com/fixubuntu.sh | bash
@@ -20,7 +24,8 @@ sudo invoke-rc.d apparmor stop
 sudo update-rc.d -f apparmor remove
 
 #System utils
-sudo apt-get -y install htop zip unzip sysstat screen xfsprogs mdadm numactl
+sudo apt-get -y install htop zip unzip sysstat screen 
+[ ${bm:-0} -eq 1 ] && xfsprogs mdadm numactl
 
 #Virtualbox
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian '$(lsb_release -cs)' contrib non-free' > /etc/apt/sources.list.d/virtualbox.list"
@@ -37,7 +42,8 @@ sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable
 
 #### Apps ####
 sudo apt-get update 
-sudo apt-get install -y google-chrome-stable virtualbox-5.1 install oracle-java8-installer meld git
+sudo apt-get install -y google-chrome-stable oracle-java8-installer meld git
+[ ${bm:-0} -eq 1 ] && sudo apt-get install virtualbox-5.1
 
 sudo apt-get -y -f install && sudo apt-get -y autoremove && sudo apt-get -y autoclean && sudo apt-get -y clean
 
