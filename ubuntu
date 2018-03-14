@@ -17,7 +17,7 @@ gsettings set com.canonical.Unity.Lenses disabled-scopes "['more_suggestions-ama
 #sudo apt-get install flashplugin-installer
 
 #Video cards - Nvidea
-sudo apt-get -y install nvidia-current
+[ ${bm:-0} -eq 1 ] && sudo apt-get -y install nvidia-current
 
 #App armor
 sudo invoke-rc.d apparmor stop
