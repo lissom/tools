@@ -4,7 +4,7 @@ set -ux -o pipefail
 bm=0
 #Ubuntu
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 
 sudo apt-get -y install compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
 [ ${bm:-0} -eq 1 ] && sudo apt-get install  linux-firmware-nonfree
