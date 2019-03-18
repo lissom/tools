@@ -6,9 +6,8 @@ bm=0
 sudo apt-get update
 sudo apt-get upgrade -y
 
-sudo apt-get -y install compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
 # [ ${bm:-0} -eq 1 ] && sudo apt-get install  linux-firmware-nonfree
-sudo apt install ubuntu-unity-desktop
+sudo apt install ubuntu-unity-desktop dconf-tools compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
 
 #Video cards - Nvidea
 [ ${bm:-0} -eq 1 ] && sudo ubuntu-drivers autoinstall
