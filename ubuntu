@@ -19,7 +19,7 @@ sudo apt install ubuntu-unity-desktop
 
 #System utils
 sudo apt-get -y install htop zip unzip sysstat screen 
-[ ${bm:-0} -eq 1 ] && sudo apt-get install -y xfsprogs mdadm numactl
+[ ${bm:-0} -eq 1 ] && sudo apt-get install -y xfsprogs mdadm numactl lvm2
 
 #Virtualbox
 [ ${bm:-0} -eq 1 ] && audo apt-get -y install virtualbox
