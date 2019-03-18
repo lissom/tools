@@ -7,7 +7,9 @@ sudo apt-get update
 sudo apt-get upgrade -y
 
 # [ ${bm:-0} -eq 1 ] && sudo apt-get install  linux-firmware-nonfree
-sudo apt install ubuntu-unity-desktop dconf-tools compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
+sudo apt install ubuntu-unity-desktop dconf-tools 
+#Settings->keyboard->keyboard shortcuts seems to have everything now
+#compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
 
 #Video cards - Nvidea
 [ ${bm:-0} -eq 1 ] && sudo ubuntu-drivers autoinstall
