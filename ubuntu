@@ -7,9 +7,9 @@ sudo apt-get update
 sudo apt-get upgrade -y
 
 # [ ${bm:-0} -eq 1 ] && sudo apt-get install  linux-firmware-nonfree
-sudo apt install ubuntu-unity-desktop dconf-tools 
+sudo apt install ubuntu-unity-desktop 
 #Settings->keyboard->keyboard shortcuts seems to have everything now
-#compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool
+#compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool dconf-tools 
 
 #Video cards - Nvidea
 [ ${bm:-0} -eq 1 ] && sudo ubuntu-drivers autoinstall
@@ -19,7 +19,7 @@ sudo apt install ubuntu-unity-desktop dconf-tools
 #sudo update-rc.d -f apparmor remove
 
 #System utils
-sudo apt-get -y install htop zip unzip sysstat screen 
+sudo apt-get -y install htop zip unzip sysstat screen openvpn nfs-client
 [ ${bm:-0} -eq 1 ] && sudo apt-get install -y xfsprogs mdadm numactl lvm2
 
 #Virtualbox
