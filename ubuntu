@@ -6,78 +6,15 @@ bm=0
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# [ ${bm:-0} -eq 1 ] && sudo apt-get install  linux-firmware-nonfree
-sudo apt install ubuntu-unity-desktop 
-#Settings->keyboard->keyboard shortcuts seems to have everything now
-#compizconfig-settings-manager unity-tweak-tool gnome-tweak-tool dconf-tools 
-
-#Video cards - Nvidea
-[ ${bm:-0} -eq 1 ] && sudo ubuntu-drivers autoinstall
-
-#App armor
-#sudo invoke-rc.d apparmor stop
-#sudo update-rc.d -f apparmor remove
-
-#System utils
-sudo apt-get -y install htop zip unzip sysstat screen openvpn nfs-client
-[ ${bm:-0} -eq 1 ] && sudo apt-get install -y xfsprogs mdadm numactl lvm2
-
-#Virtualbox
-[ ${bm:-0} -eq 1 ] && audo apt-get -y install virtualbox
-
-#Java
-sudo add-apt-repository -y ppa:linuxuprising/java
-sudo apt update
-sudo apt install -y oracle-java11-installer
+sudo apt install -y vim htop zip unzip sysstat screen openvpn nfs-client git meld default-jdk python2
 
 #Chrome
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -P /tmp
+sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
 
-#### Apps ####
-sudo apt-get update 
-sudo apt-get install -y google-chrome-stable meld git
-[ ${bm:-0} -eq 1 ] && sudo apt-get install virtualbox
+[ ${bm:-0} -eq 1 ] || exit 0
 
-sudo apt-get -y -f install && sudo apt-get -y autoremove && sudo apt-get -y autoclean && sudo apt-get -y clean
+#System utils
+sudo apt-get install -y xfsprogs mdadm numactl lvm2 virtualbox
 
-wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-3.9 main"
-sudo apt-get update
-
-#18.04 python2
-apt install python
-exit
-
-All notes past this point
-
-# Author.: Ole J
-# Date...: 23.03.2008
-# License: Whatever
-
-# Wraps a completion function
-# make-completion-wrapper <actual completion function> <name of new func.>
-#                         <command name> <list supplied arguments>
-# eg.
-# 	alias agi='apt-get install'
-# 	make-completion-wrapper _apt_get _apt_get_install apt-get install
-# defines a function called _apt_get_install (that's $2) that will complete
-# the 'agi' alias. (complete -F _apt_get_install agi)
-#
-function make-completion-wrapper () {
-	local function_name="$2"
-	local arg_count=$(($#-3))
-	local comp_function_name="$1"
-	shift 2
-	local function="
-function $function_name {
-	((COMP_CWORD+=$arg_count))
-	COMP_WORDS=( "$@" \${COMP_WORDS[@]:1} )
-	"$comp_function_name"
-	return 0
-}"
-	eval "$function"
-	echo $function_name
-	echo "$function"
-}
-
+exit 0
