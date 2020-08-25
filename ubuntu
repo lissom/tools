@@ -3,20 +3,24 @@ set -ux -o pipefail
 
 bm=0
 #Ubuntu
-sudo apt-get update
-sudo apt-get upgrade -y
+sudo apt update
+sudo apt upgrade -y
 
-sudo apt install -y vim htop zip unzip sysstat screen openvpn nfs-client git tig meld default-jdk python2
+sudo apt install -y vim htop zip unzip sysstat screen openvpn nfs-client git tig meld default-jdk python2 chrome-gnome-shell
 
 #Chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -P /tmp
 sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
 
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true 
+
+
 [ ${bm:-0} -eq 1 ] || exit 0
 
 #System utils
-sudo apt-get install -y xfsprogs mdadm numactl lvm2 virtualbox
+sudo apt install -y xfsprogs mdadm numactl lvm2 virtualbox
 
 https://www.sophos.com/en-us/products/free-tools/sophos-antivirus-for-linux.aspx
+https://extensions.gnome.org/extension/1485/workspace-matrix/
 
 exit 0
