@@ -14,13 +14,17 @@ sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true 
 
+cd /usr/local/share/fonts
+sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Regular.ttf 
+sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Bold.ttf
+sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Black.ttf
 
 [ ${bm:-0} -eq 1 ] || exit 0
 
 #System utils
 sudo apt install -y xfsprogs mdadm numactl lvm2 virtualbox
 
+exit 0
+
 https://www.sophos.com/en-us/products/free-tools/sophos-antivirus-for-linux.aspx
 https://extensions.gnome.org/extension/1485/workspace-matrix/
-
-exit 0
