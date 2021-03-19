@@ -1,6 +1,8 @@
 #!/bin/bash
 set -ux -o pipefail 
 
+# oracle download java page: https://www.oracle.com/java/technologies/javase-jdk16-downloads.html
+
 bm=0
 #Ubuntu
 sudo apt update
