@@ -8,12 +8,12 @@ bm=0
 sudo apt update
 sudo apt upgrade -y
 
-sudo apt install -y vim htop zip unzip sysstat screen openvpn nfs-client git tig meld chrome-gnome-shell \
-default-jdk python2 python-is-python3 gnome-tweak-tool openjdk-14-jdk
-
 #Chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -P /tmp
 sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
+
+sudo apt install -y vim htop zip unzip sysstat screen openvpn nfs-client git tig meld chrome-gnome-shell \
+default-jdk python2 python-is-python3 gnome-tweak-tool openjdk-14-jdk gnome-shell-extension-draw-on-your-screen
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true 
