@@ -15,7 +15,8 @@ default-jdk python2 python-is-python3 gnome-tweak-tool openjdk-14-jdk
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -P /tmp
 sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
 
-gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true 
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true 
 
 cd /usr/local/share/fonts
 sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Regular.ttf 
