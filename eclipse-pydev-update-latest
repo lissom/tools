@@ -1,0 +1,10 @@
+#!/bin/bash
+# requires python_setuptools
+pydev_prefix=$HOME/eclipse/plugins/org.python.pydev.core_
+latest_pydev=`ls -lad ${pydev_prefix}* | tail -1`
+latest_pydev_version=${latest_pydev##*_}
+echo Lastest pydev version ${latest_pydev_version}
+sed -i "s/python_pydev_version=.*/python_pydev_version=${latest_pydev_version}/" $HOME/.bashrc
+module load kanerai_python kanerai_python_setuptools 
+"/gt/runtime/kanerai_python/2.7.12/bin/python" "${pydev_prefix}${latest_pydev_version}/pysrc/setup_cython.py" build_ext --inplace
+echo $pydev_prefix
