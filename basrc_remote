@@ -1,0 +1,28 @@
+export PATH=$HOME/.local/bin
+
+python_pydev_version=8.3.0.202104101217
+pydev_prefix=$HOME/eclipse/plugins/org.python.pydev.core_
+add_python_path=${pydev_prefix}${python_pydev_version}/pysrc
+# Insert the debug path into the python path if it doesn't exist
+[[ ${PYTHONPATH:-""} != *${add_python_path}* ]] && export PYTHONPATH=`[[ ${PYTHONPATH} ]] && echo ${PYTHONPATH}:`${add_python_path}
+alias lspydev="ls -la ${pydev_prefix}* | grep ^/ | sed 's/.$//'"
+
+# If the common auth socket is not valid, point it to the oldest one, or if that fails, this one
+SSH_AUTH_SOCK_LINK=~/.ssh/ssh_auth_sock
+export THIS_SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+function set_ssh_sock() {
+# Set the socket link to the oldest socket
+if [[ -S "$SSH_AUTH_SOCK" && ! -L "$SSH_AUTH_SOCK" ]]; then
+  use_socket=`find /tmp -maxdepth 1 -name ssh-* -user $USER -printf "%T@ %Tc %p\n" | sort -n | cut -d ' ' -f 9 | head -1`
+  if [ -z "$use_socket" ]; then
+    >&2 echo "Could not find ssh socket in expected location, defaulting to env sock var, are sockets prefixed with /tmp/ssh- ?"
+    ln -sf "${SSH_AUTH_SOCK}" "${SSH_AUTH_SOCK_LINK}"
+  else
+    ln -sf "${use_socket}" "${SSH_AUTH_SOCK_LINK}"
+  fi
+fi
+}
+# If the socket link isn't a valid link, set it
+[[ -e ${SSH_AUTH_SOCK_LINK} ]] || set_ssh_sock
+# Set the soc
+[[ -e ${SSH_AUTH_SOCK_LINK} ]] || >&2 echo "Could not get a valid socket link" && export SSH_AUTH_SOCK=$SSH_AUTH_SOCK_LINK
