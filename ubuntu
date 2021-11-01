@@ -15,7 +15,7 @@ sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-client git tig meld chrome-gnome-shell \
 default-jdk python2 gnome-tweak-tool gnome-shell-extension-draw-on-your-screen
 # Python3
-sudo apt install python-is-python3 black python3-apsw python3-boto3 python3-psutil python3-pytest python3-sqlalchemy python3-ujson
+sudo apt install python-is-python3 black python3-apsw python3-boto3 python3-psutil python3-pytest python3-sqlalchemy python3-ujson mypy
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true 
