@@ -41,6 +41,7 @@ sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Black.tt
 
 #System utils
 sudo apt install -y numactl numad virt-manager
+virsh net-autostart default
 # xfsprogs mdadm lvm2 virtualbox
 
 exit 0
