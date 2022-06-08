@@ -40,7 +40,8 @@ sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Black.tt
 [ ${bm:-0} -eq 1 ] || exit 0
 
 #System utils
-sudo apt install -y numactl # xfsprogs mdadm lvm2 virtualbox
+sudo apt install -y numactl numad virt-manager
+# xfsprogs mdadm lvm2 virtualbox
 
 exit 0
 
