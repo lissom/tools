@@ -25,7 +25,7 @@ echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codenam
 sudo apt install firefox
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
-default-jdk python2 gnome-tweaks
+default-jdk python2 gnome-tweaks sshfs
 # Python3
 # sudo apt install python-is-python3 black python3-apsw python3-boto3 python3-psutil python3-pytest python3-sqlalchemy python3-ujson mypy
 
