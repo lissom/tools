@@ -29,6 +29,10 @@ default-jdk python2 gnome-tweaks sshfs pigz
 
 sudo snap install difftastic
 
+/etc/apparmor.d/tunables/home:
+@{HOMEDIRS}=/home/ /h/
+
+
 # Python3
 # sudo apt install python-is-python3 black python3-apsw python3-boto3 python3-psutil python3-pytest python3-sqlalchemy python3-ujson mypy
 
