@@ -1,3 +1,6 @@
+Pydev mypy: (so it really works with namespaces)
+--explicit-package-bases --ignore-missing-imports
+
 ## start from marketplace
 color theme
 http://eclipse-color-theme.github.com/update
@@ -12,9 +15,6 @@ json tools (by Sweet Lemonade)
 
 yedit
 ## End from marketplace
-
-Pydev mypy: (so it really works with namespaces)
---explicit-package-bases
 
 C++11 support (Mars):
 Window/Preferences/[C/C++]/Settings->Discovery:
