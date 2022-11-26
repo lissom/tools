@@ -22,21 +22,15 @@ Pin: release o=LP-PPA-mozillateam
 Pin-Priority: 1001
 ' | sudo tee /etc/apt/preferences.d/mozilla-firefox
 echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";' | sudo tee /etc/apt/apt.conf.d/51unattended-upgrades-firefox
-sudo apt install firefox
+sudo apt install firefox -y
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
 default-jdk python2 gnome-tweaks sshfs pigz
 
-# Python3
-# sudo apt install python-is-python3 black python3-apsw python3-boto3 python3-psutil python3-pytest python3-sqlalchemy python3-ujson mypy
-
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true 
 
-cd /usr/local/share/fonts
-sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Regular.ttf 
-sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Bold.ttf
-sudo wget https://github.com/cormullion/juliamono/blob/master/JuliaMono-Black.ttf
+
 
 [ ${bm:-0} -eq 1 ] || exit 0
 
