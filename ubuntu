@@ -28,8 +28,12 @@ sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-comm
 default-jdk python2 gnome-tweaks sshfs pigz
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
-gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true 
-
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-left "['<Primary><Shift><Alt>Left']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-right "['<Primary><Shift><Alt>Right]"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up "['<Primary><Shift><Alt>Up']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down "['<Primary><Shift><Alt>Down']"
+gsettings list-recursively org.gnome.desktop.wm.keybindings
 
 
 [ ${bm:-0} -eq 1 ] || exit 0
