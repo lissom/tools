@@ -25,7 +25,7 @@ echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codenam
 sudo apt install firefox -y
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
-default-jdk python2 gnome-tweaks sshfs pigz
+default-jdk python2 gnome-tweaks dconf-editor shfs pigz
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true
