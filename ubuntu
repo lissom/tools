@@ -38,6 +38,7 @@ sudo apt install firefox -y
 
 mkdir ~/.local/bin
 echo '
+#!/bin/bash
 swapfile=/swapfile
 truncate -s 0 ${swapfile}
 chattr +C ${swapfile}
