@@ -15,7 +15,7 @@ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -
 sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
-default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv
+default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true
@@ -24,6 +24,8 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-right "['<Prima
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up "['<Primary><Shift><Alt>Up']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down "['<Primary><Shift><Alt>Down']"
 #gsettings list-recursively org.gnome.desktop.wm.keybindings
+
+sudo systemctl enable --now cachefilesd # nfs -o fsc, sshfs cache=yes
 
 #Firefox - the snap just stopped working
 sudo snap remove firefox
