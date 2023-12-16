@@ -25,6 +25,7 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up "['<Primary>
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down "['<Primary><Shift><Alt>Down']"
 #gsettings list-recursively org.gnome.desktop.wm.keybindings
 
+sudo sed 's/#RUN=yes/RUN=yes/' -i /etc/default/cachefilesd 
 sudo systemctl enable --now cachefilesd # nfs -o fsc, sshfs cache=yes
 
 #Firefox - the snap just stopped working
