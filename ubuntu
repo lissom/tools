@@ -81,7 +81,7 @@ sudo apt install snapper snapper-gui
 sudo snapper -c root create-config /
 sudo snapper -c home create-config /home
 function update_kv {
-  sudo sed -n "/$1=/I{{s/\([^=]*=\).*/\1\"$2\"/};p}" -i $3
+  sudo sed "/^$1/s/=.*$/=\"$2\"/" -i $3
 }
 for f in /etc/snapper/configs/root /etc/snapper/configs/home; do
 update_kv TIMELINE_LIMIT_HOURLY 5 $f
