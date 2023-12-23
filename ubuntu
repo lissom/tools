@@ -76,6 +76,23 @@ sudo apt install libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-blu
 # after setting up screens
 sudo cp ~/.config/monitors.xml /var/lib/gdm3/.config/
 
+
+sudo apt install snapper snapper-gui
+sudo snapper -c root create-config /
+sudo snapper -c home create-config /home
+function update_kv {
+  sudo sed -n "/$1=/I{{s/\([^=]*=\).*/\1\"$2\"/};p}" -i $3
+}
+for f in /etc/snapper/configs/root /etc/snapper/configs/home; do
+update_kv TIMELINE_LIMIT_HOURLY 5 $f
+update_kv TIMELINE_LIMIT_DAILY 7 $f
+update_kv TIMELINE_LIMIT_WEEKLY 2 $f
+update_kv TIMELINE_LIMIT_MONTHLY 1 $f
+update_kv TIMELINE_LIMIT_YEARLY 0 $f
+done
+sudo systemctl enable --now snapper-timeline.timer
+sudo systemctl enable --now snapper-cleanup.timer
+
 exit 0
 
 # gnome extensions
