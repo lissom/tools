@@ -93,6 +93,20 @@ done
 sudo systemctl enable --now snapper-timeline.timer
 sudo systemctl enable --now snapper-cleanup.timer
 
+device=/dev/sda2
+sudo mount $device /mnt
+sudo btrfs sub create /mnt/@cache
+sudo umount /mnt
+sudo mkdir /cache
+sudo mount -o subvol=@cache $device /cache
+
+#compress=zstd:1
+
+UUID=11e3803a-3f24-4b5a-810e-bcdca0124369 /cache          btrfs   defaults,nodatacow,subvol=/data 0       2
+/cache/swapfile none swap sw 0 0
+
+
+
 exit 0
 
 # gnome extensions
