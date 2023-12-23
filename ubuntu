@@ -72,6 +72,9 @@ sudo apt install libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-blu
 # Check if working :
 # LANG=C pactl info | grep '^Server Name'
 
+# after setting up screens
+sudo cp ~/.config/monitors.xml /var/lib/gdm3/.config/
+
 exit 0
 
 https://www.sophos.com/en-us/products/free-tools/sophos-antivirus-for-linux.aspx
