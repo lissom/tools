@@ -77,8 +77,14 @@ sudo cp ~/.config/monitors.xml /var/lib/gdm3/.config/
 
 exit 0
 
-https://www.sophos.com/en-us/products/free-tools/sophos-antivirus-for-linux.aspx
+# gnome extensions
+https://extensions.gnome.org/extension/906/sound-output-device-chooser/
 https://extensions.gnome.org/extension/1485/workspace-matrix/
+
+
+
+
+https://www.sophos.com/en-us/products/free-tools/sophos-antivirus-for-linux.aspx
 
 Remina: 
 https://kbdlayout.info/kbdusx/virtualkeys
