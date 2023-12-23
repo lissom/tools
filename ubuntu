@@ -43,13 +43,14 @@ mkdir ~/.local/bin
 echo '
 #!/bin/bash
 swapfile=/swapfile
-truncate -s 0 ${swapfile}
-chattr +C ${swapfile}
-fallocate -l 2G ${swapfile}
-chmod 0600 ${swapfile}
-mkswap ${swapfile}
-swapon ${swapfile}
+sudo truncate -s 0 ${swapfile}
+sudo chattr +C ${swapfile}
+sudo fallocate -l 2G ${swapfile}
+suso chmod 0600 ${swapfile}
+sudo mkswap ${swapfile}
+sudo swapon ${swapfile}
 ' | tee ~/.local/bin/reset-swap
+chmod +x ~/.local/bin/reset-swap
 
 echo "pkill chrome" > ~/.bash_logout
 
