@@ -49,15 +49,28 @@ fallocate -l 2G ${swapfile}
 chmod 0600 ${swapfile}
 mkswap ${swapfile}
 swapon ${swapfile}
-' | sudo tee ~/.local/bin/reset-swap
+' | tee ~/.local/bin/reset-swap
 
+echo "pkill chrome" > ~/.bash_logout
 
 [ ${bm:-0} -eq 1 ] || exit 0
 
 #System utils
-sudo apt install -y numactl numad virt-manager
-virsh net-autostart default
+sudo apt install -y numactl numad
+# sudo apt install virt-manager
+# virsh net-autostart default
 # xfsprogs mdadm lvm2 virtualbox
+
+# https://gist.github.com/the-spyke/2de98b22ff4f978ebf0650c90e82027e
+sudo apt install pipewire-media-session- wireplumber
+systemctl --user --now enable wireplumber.service
+sudo apt install pipewire-audio-client-libraries
+sudo cp /usr/share/doc/pipewire/examples/alsa.conf.d/99-pipewire-default.conf /etc/alsa/conf.d/
+sudo apt install libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-bluetooth-
+
+# reboot
+# Check if working :
+# LANG=C pactl info | grep '^Server Name'
 
 exit 0
 
