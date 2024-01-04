@@ -63,13 +63,14 @@ sudo apt install -y numactl numad
 # virsh net-autostart default
 # xfsprogs mdadm lvm2 virtualbox
 
+# 24.04 is supposed to have pipewire
 # https://gist.github.com/the-spyke/2de98b22ff4f978ebf0650c90e82027e
 sudo apt install pipewire-media-session- wireplumber
 systemctl --user --now enable wireplumber.service
-sudo apt install pipewire-audio-client-libraries
+sudo apt install -y pipewire-audio-client-libraries
 sudo cp /usr/share/doc/pipewire/examples/alsa.conf.d/99-pipewire-default.conf /etc/alsa/conf.d/
-rm /etc/alsa/conf.d/*pulse*
-sudo apt install libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-bluetooth-
+sudo rm /etc/alsa/conf.d/*pulse*
+sudo apt install -y libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-bluetooth-
 
 # reboot
 # Check if working :
