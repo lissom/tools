@@ -15,7 +15,7 @@ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -
 sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
-default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon \
+default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon ripgrep \
 nvtop psensor
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
