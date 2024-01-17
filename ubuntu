@@ -109,7 +109,6 @@ UUID=11e3803a-3f24-4b5a-810e-bcdca0124369 /cache          btrfs   defaults,nodat
 /cache/swapfile none swap sw 0 0
 
 echo '[Unit]
-
 Description=Help Chrome close gracefully
 DefaultDependencies=no
 Before=shutdown.target
