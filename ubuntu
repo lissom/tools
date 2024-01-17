@@ -108,6 +108,24 @@ sudo mount -o subvol=@cache $device /cache
 UUID=11e3803a-3f24-4b5a-810e-bcdca0124369 /cache          btrfs   defaults,nodatacow,subvol=/data 0       2
 /cache/swapfile none swap sw 0 0
 
+echo '[Unit]
+
+Description=Help Chrome close gracefully
+DefaultDependencies=no
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+ExecStart=killall chrome --wait
+
+[Install]
+WantedBy=halt.target reboot.target shutdown.target
+' | sudo tee /etc/systemd/system/kill-chrome-gracefully.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable kill-chrome-gracefully.service
 
 
 exit 0
