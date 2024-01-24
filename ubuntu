@@ -71,6 +71,7 @@ sudo apt install -y pipewire-audio-client-libraries
 sudo cp /usr/share/doc/pipewire/examples/alsa.conf.d/99-pipewire-default.conf /etc/alsa/conf.d/
 sudo rm /etc/alsa/conf.d/*pulse*
 sudo apt install -y libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-bluetooth-
+sudo apt remove pulseaudio-module-bluetooth
 
 # reboot
 # Check if working :
@@ -79,7 +80,7 @@ sudo apt install -y libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-
 # after setting up screens
 sudo cp ~/.config/monitors.xml /var/lib/gdm3/.config/
 
-
+# btrfs snapshots
 sudo apt install snapper snapper-gui
 sudo snapper -c root create-config /
 sudo snapper -c home create-config /home
