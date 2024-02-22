@@ -118,7 +118,7 @@ Before=shutdown.target
 Type=oneshot
 User=root
 Group=root
-ExecStart=/bin/sh -c "/usr/bin/killall chrome --wait"
+ExecStart=/bin/sh -c "/usr/bin/killall chrome --wait" || true
 
 [Install]
 WantedBy=halt.target reboot.target shutdown.target
