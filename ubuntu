@@ -111,22 +111,20 @@ UUID=11e3803a-3f24-4b5a-810e-bcdca0124369 /cache          btrfs   defaults,nodat
 
 echo '[Unit]
 Description=Help Chrome close gracefully
-DefaultDependencies=no
-Before=shutdown.target
 
 [Service]
 Type=oneshot
-User=root
-Group=root
-ExecStart=/bin/sh -c "/usr/bin/killall chrome --wait" || true
+RemainAfterExit=yes
+Restart=never
+ExecStart=/bin/true
+ExecStop=/usr/bin/killall chrome --wait
 
 [Install]
-WantedBy=halt.target reboot.target shutdown.target
-' | sudo tee /etc/systemd/system/shutdown-chrome.service
+WantedBy=default.target
+' | sudo tee /etc/systemd/user/shutdown-chrome.service
 
 sudo systemctl daemon-reload
-sudo systemctl enable shutdown-chrome.service
-systemctl status shutdown-chrome.service
+systemctl --global enable --now shutdown-chrome.service
 
 
 exit 0
