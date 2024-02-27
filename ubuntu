@@ -124,7 +124,7 @@ WantedBy=default.target
 ' | sudo tee /etc/systemd/user/shutdown-chrome.service
 
 sudo systemctl daemon-reload
-systemctl --global enable --now shutdown-chrome.service
+sudo systemctl --global enable --now shutdown-chrome.service
 
 
 exit 0
