@@ -126,10 +126,6 @@ WantedBy=default.target
 sudo systemctl daemon-reload
 sudo systemctl --global enable --now shutdown-chrome.service
 
-# powerprofilesctl set performance
-# sudo apt install linux-tools-common linux-tools-`uname -r`
-# cpupower-gui
-# cpupower frequency-info
 
 exit 0
 
@@ -137,8 +133,11 @@ exit 0
 https://extensions.gnome.org/extension/906/sound-output-device-chooser/
 https://extensions.gnome.org/extension/1485/workspace-matrix/
 
-
-
+powerprofilesctl set performance
+sudo apt install linux-tools-common linux-tools-`uname -r`
+cpupower-gui
+cpupower frequency-info
+sudo cpupower frequency-set -g performance
 
 https://www.sophos.com/en-us/products/free-tools/sophos-antivirus-for-linux.aspx
 
