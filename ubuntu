@@ -126,6 +126,10 @@ WantedBy=default.target
 sudo systemctl daemon-reload
 sudo systemctl --global enable --now shutdown-chrome.service
 
+# powerprofilesctl set performance
+# sudo apt install linux-tools-common linux-tools-`uname -r`
+# cpupower-gui
+# cpupower frequency-info
 
 exit 0
 
