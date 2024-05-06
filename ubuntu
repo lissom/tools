@@ -10,11 +10,14 @@ sudo apt upgrade -y
 apt dist-upgrade
 sudo apt autoremove
 sudo apt install flatpak
-sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+# sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 #Chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -P /tmp
 sudo sudo apt install /tmp/google-chrome-stable_current_amd64.deb
+
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+sudo apt install -y ubuntu-restricted-extras
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
 default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon ripgrep \
