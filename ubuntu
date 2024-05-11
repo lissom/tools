@@ -131,6 +131,7 @@ WantedBy=default.target
 sudo systemctl daemon-reload
 sudo systemctl --global enable --now shutdown-chrome.service
 
+echo "alias rcp='rsync -chavzP --stats'" >> ~/.bashrc
 
 exit 0
 
