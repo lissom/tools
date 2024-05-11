@@ -137,6 +137,7 @@ cd ~/
 wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
 sudo llvm.sh 19
+sudo apt install libstdc++-12-dev # 22.04
 
 # sudo add-apt-repository --remove ppa:ubuntu-toolchain-r/test
 
