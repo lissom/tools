@@ -20,8 +20,9 @@ sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-comm
 default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon ripgrep \
 nvtop psensor apt-transport-https tree 7zip pipenv
 
-wget https://github.com/Cisco-Talos/clamav/releases/download/clamav-1.4.0/clamav-1.4.0.linux.x86_64.deb /tmp
-dpkg -i /tmp/clamav-1.4.0.linux.x86_64.deb
+Need to do something pragmattic about the clam config
+wget https://github.com/Cisco-Talos/clamav/releases/download/clamav-1.4.0/clamav-1.4.0.linux.x86_64.deb -P /tmp
+sudo apt install /tmp/clamav-1.4.0.linux.x86_64.deb
 echo "OnAccessIncludePath /home
 OnAccessExcludePath /home/.snapshots
 OnAccessIncludePath /var/www
