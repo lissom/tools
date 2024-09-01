@@ -32,7 +32,9 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down "['<Primar
 #gsettings list-recursively org.gnome.desktop.wm.keybindings
 
 sudo sed 's/#RUN=yes/RUN=yes/' -i /etc/default/cachefilesd 
+sudo sed 's|/var/cache/fscache|/cache/fscache|' -i /etc/cachefilesd.conf
 sudo systemctl enable --now cachefilesd # nfs -o fsc, sshfs cache=yes
+
 
 #Firefox - the snap just stopped working
 sudo snap remove firefox
@@ -48,11 +50,13 @@ sudo apt install firefox -y
 mkdir ~/.local/bin
 echo '
 #!/bin/bash
+chmod -euo pipefail
 swapfile=/swapfile
+[ -e /swapfile1 ] && sudo swapoff ${swapfile}
 sudo truncate -s 0 ${swapfile}
 sudo chattr +C ${swapfile}
-sudo fallocate -l 2G ${swapfile}
-suso chmod 0600 ${swapfile}
+sudo fallocate -l 20G ${swapfile}
+sudo chmod 0600 ${swapfile}
 sudo mkswap ${swapfile}
 sudo swapon ${swapfile}
 ' | tee ~/.local/bin/reset-swap
