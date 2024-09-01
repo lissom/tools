@@ -20,10 +20,28 @@ sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-comm
 default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon ripgrep \
 nvtop psensor apt-transport-https tree 7zip pipenv
 
-# Clam On Access Scanning
+# Clamav
+# On access scanning may need lots of inodes
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > ~/clamav-testfile
+
+sudo dd of=/etc/clamav/virusevent.d/notify.sh << EOF
+#!/bin/bash
+# Check if virus was detected
+if [ "$CLAM_VIRUSEVENT_VIRUSNAME" != "" ]; then
+    # Generate notification
+    ALERT="Signature detected by ClamAV: $CLAM_VIRUSEVENT_VIRUSNAME in $CLAM_VIRUSEVENT_FILENAME"
+    
+    # Send notification
+    notify-send -i dialog-warning "Virus found!" "$ALERT"
+fi
+EOF
+sudo chmod +x /etc/clamav/virusevent.d/notify.sh
+
+sudo dd of=/etc/sudoers.d/clamav << EOF
+clamav ALL=(ALL) NOPASSWD: /usr/bin/notify-send
+EOF
 
 if [ `clamscan ~/clamav-testfile` ]; then
 echo Test sig failed
@@ -35,7 +53,8 @@ OnAccessPrevention yes
 OnAccessExtraScanning yes
 OnAccessIncludePath /var/www
 OnAccessExcludeUname clamav
-OnAccessExcludeRootUID true" | sudo tee -a /etc/clamav/clamd.conf
+OnAccessExcludeRootUID true
+VirusEvent /etc/clamav/virusevent.d/notify.sh" | sudo tee -a /etc/clamav/clamd.conf
 # snaps are not regular files
 for f in /home/*; do
   echo OnAccessExcludePath $f/snap | sudo tee -a /etc/clamav/clamd.conf
