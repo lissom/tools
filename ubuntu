@@ -48,6 +48,14 @@ echo Test sig failed
 exit 1
 fi
 
+
+sudo ln -s /etc/clamav/clamd.conf /usr/local/etc/clamd.conf
+sudo ln -s /etc/clamav/freshclam.conf /usr/local/etc/freshclam.conf
+sudo ln -s /etc/clamav/virusevent.d /usr/local/etc/virusevent.d
+
+wget https://www.clamav.net/downloads/production/clamav-1.4.0.linux.x86_64.deb -P /tmp
+sudo apt install /tmp/clamav-1.4.0.linux.x86_64.deb
+
 echo "OnAccessMountPath /home
 OnAccessPrevention yes
 OnAccessExtraScanning yes
