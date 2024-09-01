@@ -21,7 +21,7 @@ sudo apt install -y ubuntu-restricted-extras
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
 default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon ripgrep \
-nvtop psensor apt-transport-https tree
+nvtop psensor apt-transport-https tree 7zip pipenv
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true
@@ -110,8 +110,9 @@ device=/dev/sda2
 sudo mount $device /mnt
 sudo btrfs sub create /mnt/@cache
 sudo umount /mnt
-sudo mkdir /cache
+sudo mkdir -p /cache
 sudo mount -o subvol=@cache $device /cache
+mkdir -p /cache/fscache
 
 #compress=zstd:1
 
