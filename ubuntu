@@ -25,6 +25,10 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > ~/clamav-testfile
 
+if [ `clamscan ~/clamav-testfile` ]; then
+echo Test sig failed
+exit 1
+fi
 
 echo "OnAccessIncludePath /home
 OnAccessExcludePath /home/.snapshots
@@ -53,11 +57,6 @@ Restart=on-failure
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/clamav-onacc.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now clamav-onacc.service
-
-if [ `clamscan ~/clamav-testfile` ]; then
-echo Test sig failed
-exit 1
-fi
 
 #Chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -P /tmp
