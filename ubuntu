@@ -21,7 +21,7 @@ sudo apt install -y ubuntu-restricted-extras
 
 sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-common git tig meld chrome-gnome-shell \
 default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon ripgrep \
-nvtop psensor apt-transport-https
+nvtop psensor apt-transport-https tree
 
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors true
