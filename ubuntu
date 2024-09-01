@@ -20,12 +20,22 @@ sudo apt install -y wireguard vim htop zip unzip sysstat screen openvpn nfs-comm
 default-jdk python2 gnome-tweaks dconf-editor sshfs pigz python3-venv cachefilesd clamav clamav-daemon ripgrep \
 nvtop psensor apt-transport-https tree 7zip pipenv
 
+wget https://github.com/Cisco-Talos/clamav/releases/download/clamav-1.4.0/clamav-1.4.0.linux.x86_64.deb /tmp
+dpkg -i /tmp/clamav-1.4.0.linux.x86_64.deb
 echo "OnAccessIncludePath /home
+OnAccessExcludePath /home/.snapshots
 OnAccessIncludePath /var/www
 OnAccessExcludeUname clamav
 OnAccessExcludeRootUID true" | sudo tee -a /etc/clamav/clamd.conf
+# snaps are not regular files
+for f in /home*; do
+  echo OnAccessExcludePath /home/$f/snap | sudo tee -a /etc/clamav/clamd.conf
+done
+
 # Everything but VMs
 sudo sed 's|OnAccessMaxFileSize.*|OnAccessMaxFileSize 5G|' -i /etc/clamav/clamd.conf
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+sysctl -p
 
 echo "[Unit]
 Description=ClamAV On Access Scanner
@@ -33,7 +43,8 @@ Requires=clamav-daemon.service
 After=clamav-daemon.service
 
 [Service]
-ExecStart=/usr/bin/clamonacc -F --log=/var/log/clamav/access.log
+ExecStartPre=/bin/bash -c "while [ ! -S /var/run/clamav/clamd.ctl ]; do sleep 1; done"
+ExecStart=/usr/local/sbin/clamonacc -F --log=/var/log/clamav/access.log --config-file=/etc/clamav/clamd.conf
 Restart=on-failure
 
 [Install]
