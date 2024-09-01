@@ -30,8 +30,9 @@ echo Test sig failed
 exit 1
 fi
 
-echo "OnAccessIncludePath /home
-OnAccessExcludePath /home/.snapshots
+echo "OnAccessMountPath /home
+OnAccessPrevention yes
+OnAccessExtraScanning yes
 OnAccessIncludePath /var/www
 OnAccessExcludeUname clamav
 OnAccessExcludeRootUID true" | sudo tee -a /etc/clamav/clamd.conf
