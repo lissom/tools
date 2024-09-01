@@ -31,11 +31,6 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up "['<Primary>
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down "['<Primary><Shift><Alt>Down']"
 #gsettings list-recursively org.gnome.desktop.wm.keybindings
 
-sudo sed 's/#RUN=yes/RUN=yes/' -i /etc/default/cachefilesd 
-sudo sed 's|/var/cache/fscache|/cache/fscache|' -i /etc/cachefilesd.conf
-sudo systemctl enable --now cachefilesd # nfs -o fsc, sshfs cache=yes
-
-
 #Firefox - the snap just stopped working
 sudo snap remove firefox
 sudo add-apt-repository ppa:mozillateam/ppa
@@ -72,25 +67,11 @@ sudo apt install -y numactl numad
 # virsh net-autostart default
 # xfsprogs mdadm lvm2 virtualbox
 
-# 24.04 is supposed to have pipewire
-# https://gist.github.com/the-spyke/2de98b22ff4f978ebf0650c90e82027e
-sudo apt install pipewire-media-session- wireplumber
-systemctl --user --now enable wireplumber.service
-sudo apt install -y pipewire-audio-client-libraries
-sudo cp /usr/share/doc/pipewire/examples/alsa.conf.d/99-pipewire-default.conf /etc/alsa/conf.d/
-sudo rm /etc/alsa/conf.d/*pulse*
-sudo apt install -y libldacbt-{abr,enc}2 libspa-0.2-bluetooth pulseaudio-module-bluetooth-
-sudo apt remove pulseaudio-module-bluetooth
-
-# reboot
-# Check if working :
-# LANG=C pactl info | grep '^Server Name'
-
 # after setting up screens
 sudo cp ~/.config/monitors.xml /var/lib/gdm3/.config/
 
 # btrfs snapshots
-sudo apt install snapper snapper-gui
+sudo apt install -y snapper snapper-gui
 sudo snapper -c root create-config /
 sudo snapper -c home create-config /home
 function update_kv {
@@ -106,18 +87,22 @@ done
 sudo systemctl enable --now snapper-timeline.timer
 sudo systemctl enable --now snapper-cleanup.timer
 
-device=/dev/sda2
-sudo mount $device /mnt
+if [ ! `sudo btrfs subvolume list / | grep @cache` ]; then
+root_device=$(mount | grep ' / ' | cut -f1 -d' ')
+root_mount_by=$(cat /etc/fstab  | grep ' / ' | grep -E 'subvol=@([[:space:]]|,)' | cut -f1 -d' ')
+sudo mount $root_device /mnt
 sudo btrfs sub create /mnt/@cache
 sudo umount /mnt
 sudo mkdir -p /cache
+echo ${root_mount_by} /cache btrfs defaults,nodatacow,subvol=@cache 0 3 | sudo tee -a /etc/fstab
 sudo mount -o subvol=@cache $device /cache
+umount $root_device
+fi
 mkdir -p /cache/fscache
 
-#compress=zstd:1
-
-UUID=11e3803a-3f24-4b5a-810e-bcdca0124369 /cache          btrfs   defaults,nodatacow,subvol=/data 0       2
-/cache/swapfile none swap sw 0 0
+sudo sed 's/#RUN=yes/RUN=yes/' -i /etc/default/cachefilesd 
+sudo sed 's|/var/cache/fscache|/cache/fscache|' -i /etc/cachefilesd.conf
+sudo systemctl enable --now cachefilesd # nfs -o fsc, sshfs cache=yes
 
 echo '[Unit]
 Description=Help Chrome close gracefully
@@ -134,19 +119,17 @@ WantedBy=default.target
 ' | sudo tee /etc/systemd/user/shutdown-chrome.service
 
 sudo systemctl daemon-reload
-sudo systemctl --global enable --now shutdown-chrome.service
+sudo systemctl --global enable shutdown-chrome.service
 
 echo "alias rcp='rsync -chavzP --stats'" >> ~/.bashrc
+
+exit 0
 
 cd ~/
 wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
 sudo llvm.sh 19
 sudo apt install libstdc++-12-dev # 22.04
-
-# sudo add-apt-repository --remove ppa:ubuntu-toolchain-r/test
-
-exit 0
 
 # gnome extensions
 https://extensions.gnome.org/extension/906/sound-output-device-chooser/
