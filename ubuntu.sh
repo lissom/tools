@@ -174,8 +174,8 @@ Description=Help Chrome close gracefully
 Type=oneshot
 RemainAfterExit=yes
 Restart=never
-ExecStart=/bin/true
-ExecStop=/usr/bin/killall chrome --wait
+ExecStart=/usr/bin/true
+ExecStop=/usr/bin/killall chrome --wait || /usr/bin/true
 
 [Install]
 WantedBy=default.target
