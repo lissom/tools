@@ -176,7 +176,7 @@ Type=oneshot
 RemainAfterExit=yes
 Restart=never
 ExecStart=${true_path}
-ExecStop=/usr/bin/killall chrome --wait || ${true_path}
+ExecStop=/usr/bin/killall chrome --wait
 
 [Install]
 WantedBy=default.target
@@ -199,7 +199,7 @@ EOF
 sudo chmod +x ${s_exec_path}
 ${s_exec_path}
 
-service=shutdown_nfs
+service=shutdown-nfs
 s_path=/opt/local/systemd/$service.service
 sudo dd of=${s_path} << EOF
 [Unit]
