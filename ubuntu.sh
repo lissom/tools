@@ -1,10 +1,9 @@
 #!/bin/bash
-set -ux -o pipefail 
+set -euxo pipefail 
 
 # oracle download java page: https://www.oracle.com/java/technologies/javase-jdk16-downloads.html
 
 bm=0
-#Ubuntu
 sudo apt update
 sudo apt upgrade -y
 apt dist-upgrade
@@ -52,9 +51,6 @@ fi
 sudo ln -s /etc/clamav/clamd.conf /usr/local/etc/clamd.conf
 sudo ln -s /etc/clamav/freshclam.conf /usr/local/etc/freshclam.conf
 sudo ln -s /etc/clamav/virusevent.d /usr/local/etc/virusevent.d
-
-wget https://www.clamav.net/downloads/production/clamav-1.4.0.linux.x86_64.deb -P /tmp
-sudo apt install /tmp/clamav-1.4.0.linux.x86_64.deb
 
 echo "OnAccessMountPath /home
 OnAccessPrevention yes
