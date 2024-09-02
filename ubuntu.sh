@@ -195,6 +195,7 @@ for m_path in $(mount | grep nfs | cut -d' ' -f3); do
 done
 for _ in {1..10}; do
 [ `/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | wc -l` -eq 0 ] && break
+sleep 1s
 done
 for m_path in $(mount | grep nfs | cut -d' ' -f3); do
 /usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | xargs -r kill -9
