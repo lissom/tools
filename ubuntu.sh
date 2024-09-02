@@ -190,14 +190,18 @@ s_exec_path=/opt/local/systemd/force-unmount
 sudo dd of=${s_exec_path} << 'EOF'
 #/bin/bash
 for m_path in $(mount | grep nfs | cut -d' ' -f3); do
-/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | xargs -r kill; /usr/bin/umount ${m_path}
+/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | xargs -r kill
+/usr/bin/umount ${m_path}
+done
+for _ in {1..10}; do
+[ `/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | wc -l` -eq 0 ] && break
 done
 for m_path in $(mount | grep nfs | cut -d' ' -f3); do
-/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | xargs -r kill -9; /usr/bin/umount ${m_path} -lfr
+/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | xargs -r kill -9
+/usr/bin/umount ${m_path} -lfr
 done
 EOF
 sudo chmod +x ${s_exec_path}
-${s_exec_path}
 
 service=shutdown-nfs
 s_path=/opt/local/systemd/$service.service
