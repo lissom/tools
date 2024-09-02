@@ -167,22 +167,58 @@ sudo sed 's/#RUN=yes/RUN=yes/' -i /etc/default/cachefilesd
 sudo sed 's|/var/cache/fscache|/cache/fscache|' -i /etc/cachefilesd.conf
 sudo systemctl enable --now cachefilesd # nfs -o fsc, sshfs cache=yes
 
-echo '[Unit]
+true_path=`which true`
+echo "[Unit]
 Description=Help Chrome close gracefully
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 Restart=never
-ExecStart=/usr/bin/true
-ExecStop=/usr/bin/killall chrome --wait || /usr/bin/true
+ExecStart=${true_path}
+ExecStop=/usr/bin/killall chrome --wait || ${true_path}
 
 [Install]
 WantedBy=default.target
-' | sudo tee /etc/systemd/user/shutdown-chrome.service
+" | sudo tee /etc/systemd/user/shutdown-chrome.service
 
 sudo systemctl daemon-reload
 sudo systemctl --global enable shutdown-chrome.service
+
+sudo mkdir -p /opt/local/systemd
+s_exec_path=/opt/local/systemd/force-unmount
+sudo dd of=${s_exec_path} << 'EOF'
+#/bin/bash
+for m_path in $(mount | grep nfs | cut -d' ' -f3); do
+/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | xargs -r kill; /usr/bin/umount ${m_path}
+done
+for m_path in $(mount | grep nfs | cut -d' ' -f3); do
+/usr/bin/lsof -N $m_path | awk 'NR>1 {print $2}' | xargs -r kill -9; /usr/bin/umount ${m_path} -lfr
+done
+EOF
+sudo chmod +x ${s_exec_path}
+${s_exec_path}
+
+service=shutdown_nfs
+s_path=/opt/local/systemd/$service.service
+sudo dd of=${s_path} << EOF
+[Unit]
+Description=Terminate nfs mounts
+DefaultDependencies=no
+After=network-online.target wg-quick@wg0
+Requires=network-online.target wg-quick@wg0
+
+[Service]
+ExecStart=/bin/true
+RemainAfterExit=yes
+ExecStop=${s_exec_path}
+
+[Install]
+WantedBy=network-online.target
+EOF
+
+sudo ln -s ${s_path} /etc/systemd/system/${service}.service
+sudo systemctl enable --now ${service}
 
 echo "alias rcp='rsync -chavzP --stats'" >> ~/.bashrc
 
